@@ -3,7 +3,7 @@
 int status = 0; 
 int main(void){
 do {
-printf("S>");
+printf("SSH>");
 status = read();
 }
 while (status == 0);

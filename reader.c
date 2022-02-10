@@ -3,7 +3,7 @@
 #include <signal.h>
 #include "parse.c"
 int flag =1;
-int read(){
+int reader(){
     char input[512];
     int status = 0;
     flag = gets(input);

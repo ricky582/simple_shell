@@ -1,20 +1,29 @@
 #include <stdio.h>
 #include <string.h>
-
+#include <unistd.h>
 
 int execute(char * token){
+char *cmd = token;
+char *argv[3];
+argv[0] = "ls";
+argv[1] = "-la";
+argv[2] = NULL;
 pid_t pid = fork(); 
 if (pid < 0){
-    printf("pid = -1\n");
+    perror("Error!");
 
 }
 else if (pid == 0){
-printf("pid = 0\n");
+printf("pls");
+execvp(cmd, argv);
 }
 else{
 wait(NULL);
-printf("Else Triggered\n");
+printf("the child has completed");
 }
 
 return 0;
+
+
+
 }

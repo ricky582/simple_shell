@@ -1,14 +1,18 @@
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
-#include "read.c"
-int status = 0; 
+#include "reader.c"
+
+int status =0;
 int main(void){
 do {
 printf("SSH>");
-status = read();
+status = reader();
 }
-while (status == 0);
-return 0;
+while (status == 0);{
+
+return 0;}
 }
+
+
 

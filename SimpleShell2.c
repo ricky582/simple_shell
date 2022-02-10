@@ -4,7 +4,7 @@
 #include "reader.c"
 
 int status =0;
-int main(void){
+int main(int argc, char *argv[]){
 do {
 printf("SSH>");
 status = reader();

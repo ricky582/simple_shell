@@ -15,5 +15,5 @@ if (flag == 0){
     signal(SIGINT, flag);
     status = 1;
 } 
-parse(input);
+parse(input); 
 return status;}

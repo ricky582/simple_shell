@@ -24,28 +24,6 @@ int parse(char input [512]){
 }
 
 
-int flag =1;
-int reader(){
-    FILE *fp;
-    char input[512];
-    //input = malloc(512 * sizeof(char));
-    int status = 0;
-    flag = fgets(input,512, stdin);//Change to fgets and check if null then exit if true
-    if (flag != NULL){
-     parse(input);  
-    }else {
-      signal(SIGINT, flag);  
-
-    }
-                    //allocate memory for tokenised array
-                        //parse after if not null
-if (strcmp(input, "exit") == 0){
-     signal(SIGINT, flag);
-    status = 1; 
-}
-//free(input);
-//free memory
-return status;}
 
 
 
@@ -70,6 +48,7 @@ else if (pid  == 0){
 
 execvp(token, argv);
 memset(argv, NULL, sizeof(argv));
+exit(0);
 }
 else{
 wait(NULL);

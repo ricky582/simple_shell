@@ -3,17 +3,29 @@
 #include <signal.h>
 #include "header.h"
 #include "Methods.c"
+#include <stdlib.h>
 
 int status =0;
-int main(int argc, char *argv[]){
+String input, tokens[512];
+
+int main(void){
 do {
+
 printf("SSH>");
-status = reader();
+
+input = malloc(512 * sizeof(char));
+
+reader(input);
+
+parse(input,tokens);
+
+status= execute(tokens);
+
+free(input);
 }
 while (status == 0);{
 
 return 0;}
 }
-
 
 

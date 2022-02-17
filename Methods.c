@@ -3,7 +3,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include "header.h"
-#define max 512
+#include "stdlib.h"
 
 
 int parse(char input [512]){
@@ -12,7 +12,6 @@ int parse(char input [512]){
     tokens[0] = token; 
     int i = 1;
      while(token != NULL ) {
-      //printf( "%s\n", token ); //printing each token
       token = strtok(NULL, " \n\t|<>&;");
       tokens[i] = token;
       
@@ -30,15 +29,10 @@ int parse(char input [512]){
 
 int execute(char * tokens[]){
 char * token =tokens[0] ;
-char *argv[511];
 
 
-int j = 1;
-argv[0] = token;
-while (tokens[j] != NULL){
-argv[j] = tokens[j];
-j++;
-}
+
+
 pid_t pid = fork(); 
 if (pid < 0){
     perror("Error!");
@@ -46,16 +40,18 @@ if (pid < 0){
 }
 else if (pid  == 0){
 
-execvp(token, argv);
-memset(argv, NULL, sizeof(argv));
-exit(0);
+if(execvp(tokens[0], tokens)==-1);{
+
+    perror("Error");
+    exit(0);
+}
 }
 else{
 wait(NULL);
-//printf("the child has completed\n");
 
 }
 
 return 0;
 
 }
+

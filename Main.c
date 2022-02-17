@@ -7,22 +7,22 @@
 
 int main(int argc, char *argv[]){
 
-printf ("\nProgram Start.....\n\n");
+//printf ("\nProgram Start.....\n\n");
 
 char *userInput;
 userInput = malloc(sizeof(char) * 512);
 int bit = 0;
 
     printf("SSH>");
-    while(fgets(userInput, 64, stdin)){
-        printf("userInput:%s",userInput);
+    while(fgets(userInput, 512, stdin)){
+        //printf("userInput:%s",userInput);
 
         if(strncmp(userInput, "exit", 4) ==0) {
-            printf("breaking");
+            //printf("breaking");
             return 0;
         }
         parse(userInput);
-        free(userInput);
+        
         printf("SSH>");
         
     }

@@ -25,7 +25,7 @@ memset(argv, NULL, sizeof(argv));
 }
 else{
 wait(NULL);
-printf("the child has completed\n");
+//printf("the child has completed\n");
 
 }
 

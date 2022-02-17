@@ -7,11 +7,10 @@
 int parse(char input [512]){
     char * tokens[512];
     char * token = strtok(input, " \n\t|<>&;");
-    
     tokens[0] = token; 
     int i = 1;
      while(token != NULL ) {
-      printf( "%s\n", token ); //printing each token
+      //printf( "%s\n", token ); //printing each token
       token = strtok(NULL, " \n\t|<>&;");
       tokens[i] = token;
       

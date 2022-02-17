@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
-#include "reader.c"
+#include "header.h"
+#include "Methods.c"
 
 int status =0;
 int main(int argc, char *argv[]){

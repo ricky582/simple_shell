@@ -3,6 +3,9 @@
 #include <string.h>
 #include <signal.h>
 #include <unistd.h>
-int parse(char input [512]);
-int reader();
-int execute(char * tokens[]);
+
+typedef char* String;
+
+void parse(String input, String tokens[]);
+void reader();
+int execute(String tokens[]);

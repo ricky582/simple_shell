@@ -5,7 +5,7 @@
 #include "header.h"
 #include "stdlib.h"
 
-
+//Stage 1
 int parse(char input [512]){
     char * tokens[512];
     char * token = strtok(input, " \n\t|<>&;");
@@ -25,7 +25,7 @@ int parse(char input [512]){
 
 
 
-
+//Stage 2
 
 int execute(char * tokens[]){
 char * token =tokens[0] ;
@@ -42,7 +42,8 @@ else if (pid  == 0){
 
 if(execvp(tokens[0], tokens)==-1);{
 
-    perror("Error");
+    char * errormsg = tokens[0];
+    perror(errormsg);
     exit(0);
 }
 }
@@ -54,4 +55,9 @@ wait(NULL);
 return 0;
 
 }
+
+//Stage 3
+
+
+
 

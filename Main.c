@@ -13,7 +13,7 @@ int main(int argc, char *argv[]){
 
 char *userInput;
 userInput = malloc(sizeof(char) * 512);
-int bit = 0;
+
     char *original =getenv("PATH");
     //setenv("PATH", "GIBBEr", 1);
     //printf("PATH : %s\n", getenv("PATH"));

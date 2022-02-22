@@ -4,6 +4,28 @@
 #include <unistd.h>
 #include "header.h"
 #include "stdlib.h"
+void setpath(char * tokens[]){
+    if(tokens[1] == NULL){
+        perror("Error");
+        printf("%s\n", tokens[1]);}
+        
+    else if (tokens[2] == NULL){
+        perror("Error");
+        printf("%s\n", tokens[2]);}
+    else{ setenv("PATH", tokens[2] , 1);}
+
+
+    
+}
+
+void getpath(char * tokens[]){
+    if(tokens[1] == NULL){
+        perror("Error");
+
+    }
+     printf("PATH : %s\n", getenv(tokens[1]));
+     //printf("PATH : %s\n", getenv("PATH"));
+}
 
 
 int parse(char input [512]){
@@ -18,29 +40,22 @@ int parse(char input [512]){
       i++;
       
       }
-      execute(tokens);
+     if(strncmp(tokens[0], "setpath", 7) ==0 ){
+          
+        setpath(tokens);
+    
+        }
+
+    else if(strncmp(tokens[0], "getpath", 7) ==0 ){
+
+        getpath(tokens);
+   
+        }
+      else{
+          execute(tokens);}
       return 0;
 }
 
-void setpath(char **tokens){
-    if(tokens[1] == NULL){
-        perror("Error");
-        printf("%s\n", tokens[1]);}
-        
-    else if (tokens[2] == NULL){
-        perror("Error");
-        printf("%s\n", tokens[2]);}
-    else{ setenv("PATH", tokens[2] , 1);}
-
-
-    
-}
-
-void getpath(char **tokens){
-
-     printf("PATH : %s\n", getenv(tokens[1]));
-     //printf("PATH : %s\n", getenv("PATH"));
-}
 
 
 
@@ -48,17 +63,7 @@ void getpath(char **tokens){
 int execute(char * tokens[]){
 char * token =tokens[0] ;
 
-if(strncmp(token, "setpath", 7) ==0 ){
 
-    setpath(tokens);
-    
-}
-
-if(strncmp(token, "getpath", 7) ==0 ){
-
-   getpath(tokens);
-   
-}
 
 pid_t pid = fork(); 
 if (pid < 0){
@@ -68,8 +73,8 @@ if (pid < 0){
 else if (pid  == 0){
 
 if(execvp(tokens[0], tokens)==-1);{
-
-    perror("Error");
+    char * errormsg = tokens[0];
+    perror(errormsg);
 
 
     exit(0);

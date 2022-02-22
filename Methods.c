@@ -43,6 +43,8 @@ else if (pid  == 0){
 if(execvp(tokens[0], tokens)==-1);{
 
     perror("Error");
+
+
     exit(0);
 }
 }

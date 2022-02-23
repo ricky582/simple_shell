@@ -13,8 +13,11 @@ int main(int argc, char *argv[]){
 
 char *userInput;
 userInput = malloc(sizeof(char) * 512);
-
+    char cwd[256];
     char *original =getenv("PATH");
+    char *home = getenv("HOME");
+    setenv("PATH", home, 1);
+    chdir(home);
     //setenv("PATH", "GIBBEr", 1);
     //printf("PATH : %s\n", getenv("PATH"));
     printf("SSH>");
@@ -28,8 +31,9 @@ userInput = malloc(sizeof(char) * 512);
             return 0;
         }
         parse(userInput);
-        
+        printf("The current working directory: %s \n", getcwd(cwd, sizeof(cwd)));
         printf("SSH>");
+        
         
     }
 

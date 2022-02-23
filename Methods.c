@@ -12,7 +12,10 @@ void setpath(char * tokens[]){
     else if (tokens[2] == NULL){
         perror("Error");
         printf("%s\n", tokens[2]);}
-    else{ setenv("PATH", tokens[2] , 1);}
+    else{ 
+        setenv("PATH", tokens[2] , 1);
+        
+        }
 
 
     
@@ -23,7 +26,7 @@ void getpath(char * tokens[]){
         perror("Error");
 
     }
-     printf("PATH : %s\n", getenv(tokens[1]));
+     else{printf("%s : %s\n", tokens[1],getenv(tokens[1]));}
      //printf("PATH : %s\n", getenv("PATH"));
 }
 
@@ -40,14 +43,17 @@ int parse(char input [512]){
       i++;
       
       }
-     if(strncmp(tokens[0], "setpath", 7) ==0 ){
-          
+    if(tokens[0] == NULL){
+        execute(tokens);
+    }
+     else if(strcmp(tokens[0], "setpath") ==0 ){
+         
         setpath(tokens);
     
         }
 
-    else if(strncmp(tokens[0], "getpath", 7) ==0 ){
-
+    else if(strcmp(tokens[0], "getpath") ==0 ){
+    
         getpath(tokens);
    
         }

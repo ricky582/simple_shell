@@ -20,7 +20,9 @@ userInput = malloc(sizeof(char) * 512);
     printf("SSH>");
     while(fgets(userInput, 512, stdin)){
         //printf("userInput:%s",userInput);
-
+        if(*(userInput+strlen(userInput)-1) != '\n'){
+            for (int c; (c = getchar()) != EOF && c != '\n';);
+        } 
         if(strncmp(userInput, "exit", 4) ==0) {
             setenv("PATH", original,1);
     //printf("PATH : %s\n", getenv("PATH"));

@@ -22,16 +22,17 @@ userInput = malloc(sizeof(char) * 512);
 
         if(strncmp(userInput, "exit", 4) ==0) {
             setenv("PATH", original,1);
-    ;
+            printf("%s\n", getenv("PATH"));
             return 0;
         }
         parse(userInput);
-        printf("The current working directory: %s \n", getcwd(cwd, sizeof(cwd)));
+        
         printf("SSH>");
         
         
     }
-
+    setenv("PATH", original,1);
+    printf("%s\n", getenv("PATH"));
     return 0;
 
 

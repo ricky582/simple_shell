@@ -4,30 +4,41 @@
 #include <unistd.h>
 #include "header.h"
 #include "stdlib.h"
+char cwd[256];
 void setpath(char * tokens[]){
     if(tokens[1] == NULL){
-        perror("Error");
-        printf("%s\n", tokens[1]);}
+        printf("Error: nothing to set path to\n");
+        //perror("Error: nothing to set path to");
+    }
         
-    else if (tokens[2] == NULL){
-        perror("Error");
-        printf("%s\n", tokens[2]);}
-    else{ 
-        setenv("PATH", tokens[2] , 1);
+    else if (tokens[2] != NULL){
+        printf("Error: Too many paremeters\n");}
+        //perror("Error:Too many paremeters");}
+        
+    else{
+
+        setenv("PATH", tokens[1] , 1);
         
         }
 
 
     
 }
+void currentCWD(){
 
-void getpath(){
+    printf("The current working directory: %s \n", getcwd(cwd, sizeof(cwd)));;
+}
+
+void getpath(char * tokens[]){
+    if(tokens[1] != NULL){
+        printf("Error: Too many paremeters\n");
+        //perror("Error:Too many paremeters");
+    }
+
+    
+    else {printf("PATH : %s\n", getenv("PATH"));}}
     
 
-    }
-     else{printf("PATH : %s\n", getenv("PATH"));}
-     //printf("PATH : %s\n", getenv("PATH"));
-}
 
 
 int parse(char input [512]){
@@ -56,6 +67,9 @@ int parse(char input [512]){
         getpath(tokens);
    
         }
+    else if(strcmp(tokens[0], "currentCWD") ==0 ){
+        currentCWD();   
+    }
       else{
           execute(tokens);}
       return 0;

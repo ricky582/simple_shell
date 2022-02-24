@@ -9,14 +9,13 @@
 
 int main(int argc, char *argv[]){
 
-//printf ("\nProgram Start.....\n\n");
 
 char *userInput;
 userInput = malloc(sizeof(char) * 512);
-
+    char cwd[256];
     char *original =getenv("PATH");
-    //setenv("PATH", "GIBBEr", 1);
-    //printf("PATH : %s\n", getenv("PATH"));
+    char *home = getenv("HOME");
+    chdir(home);
     printf("SSH>");
     while(fgets(userInput, 512, stdin)){
         //printf("userInput:%s",userInput);
@@ -25,16 +24,17 @@ userInput = malloc(sizeof(char) * 512);
         } 
         if(strncmp(userInput, "exit", 4) ==0) {
             setenv("PATH", original,1);
-    //printf("PATH : %s\n", getenv("PATH"));
-            //printf("\n");
+            printf("%s\n", getenv("PATH"));
             return 0;
         }
         parse(userInput);
         
         printf("SSH>");
         
+        
     }
-
+    setenv("PATH", original,1);
+    printf("%s\n", getenv("PATH"));
     return 0;
 
 

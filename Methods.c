@@ -21,12 +21,11 @@ void setpath(char * tokens[]){
     
 }
 
-void getpath(char * tokens[]){
-    if(tokens[1] == NULL){
-        perror("Error");
+void getpath(){
+    
 
     }
-     else{printf("%s : %s\n", tokens[1],getenv(tokens[1]));}
+     else{printf("PATH : %s\n", getenv("PATH"));}
      //printf("PATH : %s\n", getenv("PATH"));
 }
 

@@ -6,3 +6,7 @@
 int parse(char input [512]);
 int reader();
 int execute(char * tokens[]);
+void setpath(char * tokens[]);
+void currentCWD();
+void cd(char * tokens[]);
+void getpath(char * tokens[]);

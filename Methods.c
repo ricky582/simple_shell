@@ -5,6 +5,7 @@
 #include "header.h"
 #include "stdlib.h"
 char cwd[256];
+
 void setpath(char * tokens[]){
     if(tokens[1] == NULL){
         printf("Error: nothing to set path to\n");
@@ -27,6 +28,24 @@ void setpath(char * tokens[]){
 void currentCWD(){
 
     printf("The current working directory: %s \n", getcwd(cwd, sizeof(cwd)));;
+}
+
+void cd(char * tokens[]){
+    char *home = getenv("HOME");
+    if (tokens[1] == NULL){
+        chdir(home);
+        }
+    else if(tokens[2] != NULL){
+
+        perror("Too many parameters");
+    }
+    else{
+        if (chdir(tokens[1]) != 0){
+           char * wrong = tokens[1]; 
+            perror(wrong);
+        };
+
+    }
 }
 
 void getpath(char * tokens[]){
@@ -69,6 +88,10 @@ int parse(char input [512]){
         }
     else if(strcmp(tokens[0], "currentCWD") ==0 ){
         currentCWD();   
+    }
+    else if (strcmp(tokens[0], "cd") ==0 ){
+        cd(tokens);
+
     }
       else{
           execute(tokens);}

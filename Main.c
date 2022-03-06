@@ -5,10 +5,7 @@
 #include "Methods.c"
 #include "stdlib.h"
 
-
-
 int main(int argc, char *argv[]){
-
 
 char *userInput;
 userInput = malloc(sizeof(char) * 512);
@@ -29,19 +26,9 @@ userInput = malloc(sizeof(char) * 512);
         }
         parse(userInput);
         
-        printf("SSH>");
-        
-        
+        printf("SSH>");   
     }
     setenv("PATH", original,1);
     printf("%s\n", getenv("PATH"));
     return 0;
-
-
 }
-
-
-
-
-
-

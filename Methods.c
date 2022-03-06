@@ -12,15 +12,11 @@ void setpath(char * tokens[]){
         printf("Error: nothing to set path to\n");
         //perror("Error: nothing to set path to");
     }
-        
     else if (tokens[2] != NULL){
         printf("Error: Too many paremeters\n");}
         //perror("Error:Too many paremeters");}
-        
     else{
-
         setenv("PATH", tokens[1] , 1);
-        
         }  
 }
 
@@ -43,7 +39,6 @@ void cd(char * tokens[]){
            char * wrong = tokens[1]; 
             perror(wrong);
         };
-
     }
 }
 
@@ -64,18 +59,15 @@ int parse(char input [512]){
      while(token != NULL ) {
       token = strtok(NULL, " \n\t|<>&;");
       tokens[i] = token;
-      
       i++;
       }
     if(tokens[0] == NULL){
         execute(tokens);
     }
-     else if(strcmp(tokens[0], "setpath") ==0 ){
-         
+    else if(strcmp(tokens[0], "setpath") ==0 ){
         setpath(tokens);
         }
     else if(strcmp(tokens[0], "getpath") ==0 ){
-    
         getpath(tokens);
         }
     else if(strcmp(tokens[0], "currentCWD") ==0 ){
@@ -101,7 +93,6 @@ else if (pid  == 0){
 if(execvp(tokens[0], tokens)==-1);{
     char * errormsg = tokens[0];
     perror(errormsg);
-
     exit(0);
 }
 }

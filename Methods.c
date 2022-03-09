@@ -5,6 +5,8 @@
 #include "header.h"
 #include "stdlib.h"
 char cwd[256];
+//char commands[20][512];
+//int count = 0;
 
 void setpath(char * tokens[]){
     if(tokens[1] == NULL){
@@ -28,6 +30,10 @@ void setpath(char * tokens[]){
 void currentCWD(){
 
     printf("The current working directory: %s \n", getcwd(cwd, sizeof(cwd)));;
+}
+
+void printCount(){
+    printf("\n %d", count);
 }
 
 void cd(char * tokens[]){
@@ -63,6 +69,20 @@ void getpath(char * tokens[]){
 int parse(char input [512]){
     char * tokens[512];
     char * token = strtok(input, " \n\t|<>&;");
+    /*if (count == 20){
+            int i;
+            for (i = 0; i<20; i++){
+                strcpy(commands[i], commands[i+1]);
+            }
+            strcpy(commands[20], input);
+
+        } else {
+            strcpy(commands[count], input);
+            count ++;
+        }
+    
+    printf("\n%s",commands[count-1]);
+    */
     tokens[0] = token; 
     int i = 1;
      while(token != NULL ) {
@@ -75,7 +95,11 @@ int parse(char input [512]){
     if(tokens[0] == NULL){
         execute(tokens);
     }
-     else if(strcmp(tokens[0], "setpath") ==0 ){
+    else if(strcmp(tokens[0], "!!") ==0 ){
+        parse(commands[count-2]);
+    
+        }
+    else if(strcmp(tokens[0], "setpath") ==0 ){
          
         setpath(tokens);
     
@@ -130,7 +154,6 @@ wait(NULL);
 return 0;
 
 }
-
 
 
 

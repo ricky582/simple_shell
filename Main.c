@@ -3,30 +3,58 @@
 #include <signal.h>
 #include "header.h"
 #include "Methods.c"
+#include "stdlib.h"
+
 
 
 int main(int argc, char *argv[]){
 
-    char *userInput;
-    userInput = malloc(sizeof(char) * 512);
-    //prompt for input
+char *userInput;
+userInput = malloc(sizeof(char) * 512);
+char commands[19][200];
+int count = 0;
+    char cwd[256];
+    char *original =getenv("PATH");
+    char *home = getenv("HOME");
+    chdir(home);
     printf("SSH>");
     while(fgets(userInput, 512, stdin)){
-            
-        //dumps input buffer if input is larger than character limit
-        if (*(userInput + strlen(userInput)-1) != '\n'){
+        //printf("userInput:%s",userInput);
+        if(*(userInput+strlen(userInput)-1) != '\n'){
             for (int c; (c = getchar()) != EOF && c != '\n';);
-        }
-
-        if(strncmp(userInput, "exit", 4) ==0) { //exit command
+        } 
+        if(strncmp(userInput, "exit", 4) ==0) {
+            setenv("PATH", original,1);
+            printf("%s\n", getenv("PATH"));
             return 0;
         }
+        if (count == 19){
+            int i;
+            for (i = 0; i<19; i++){
+                strcpy(commands[i], commands[i+1]);
+            }
+            strcpy(commands[19], userInput);
 
-        //input is parsed
-        parse(userInput); 
-
-        //next prompt for input
+        } else {
+            strcpy(commands[count], userInput);
+            count ++;
+        }
+        for (int i=0; i < sizeof(commands)/sizeof(commands[0]); i++)
+        {
+        printf("now printing command array");
+        printf("%s\n", commands[i]);
+        printf("done printing command array");
+        }
+        parse(userInput);
+        
         printf("SSH>");
+        
+        
     }
+    setenv("PATH", original,1);
+    printf("%s\n", getenv("PATH"));
     return 0;
+
+
 }
+

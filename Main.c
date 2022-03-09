@@ -11,8 +11,7 @@ int main(int argc, char *argv[]){
 
 char *userInput;
 userInput = malloc(sizeof(char) * 512);
-char commands[19][200];
-int count = 0;
+    count = 0;
     char cwd[256];
     char *original =getenv("PATH");
     char *home = getenv("HOME");
@@ -28,23 +27,20 @@ int count = 0;
             printf("%s\n", getenv("PATH"));
             return 0;
         }
-        if (count == 19){
+        if (count == 20){
             int i;
-            for (i = 0; i<19; i++){
+            for (i = 0; i<20; i++){
                 strcpy(commands[i], commands[i+1]);
             }
-            strcpy(commands[19], userInput);
+            strcpy(commands[20], userInput);
 
         } else {
             strcpy(commands[count], userInput);
             count ++;
         }
-        for (int i=0; i < sizeof(commands)/sizeof(commands[0]); i++)
-        {
-        printf("now printing command array");
-        printf("%s\n", commands[i]);
-        printf("done printing command array");
-        }
+        printf("\n%s",commands[count-1]);
+        //enterIntoArray(userInput);
+        printCount();
         parse(userInput);
         
         printf("SSH>");

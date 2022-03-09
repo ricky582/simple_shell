@@ -25,7 +25,6 @@ userInput = malloc(sizeof(char) * 512);
             return 0;
         }
         parse(userInput);
-        
         printf("SSH>");   
     }
     setenv("PATH", original,1);

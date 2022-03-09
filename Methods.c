@@ -21,7 +21,6 @@ void setpath(char * tokens[]){
 }
 
 void currentCWD(){
-
     printf("The current working directory: %s \n", getcwd(cwd, sizeof(cwd)));;
 }
 
@@ -89,7 +88,6 @@ if (pid < 0){
     perror("Error!");
 }
 else if (pid  == 0){
-
 if(execvp(tokens[0], tokens)==-1);{
     char * errormsg = tokens[0];
     perror(errormsg);

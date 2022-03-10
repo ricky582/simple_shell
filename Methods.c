@@ -179,7 +179,7 @@ int parse(char input [512]){
 void save_file(){
     
     FILE *file =NULL;
-    file= fopen("hist_list.txt","w");
+    file= fopen(".hist_list.txt","w");
     if(file==NULL){
         printf("This file does not seem to exist");
         exit(1);

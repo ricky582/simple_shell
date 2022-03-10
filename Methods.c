@@ -93,37 +93,52 @@ int parse(char input [512]){
         execute(tokens);
     }
     else if(strcmp(tokens[0], "!!") ==0 ){
-        printf("\n %s", commands[count-2]);
         if (count ==19){
+            printf("%s", commands[count]);
             parse(commands[count]);
         }
         else{
+            printf("%s", commands[count-1]);
             parse(commands[count-1]);
         }
-        }
-        else if(strcmp(tokens[0], "history") ==0 ){
+    }
+    else if(strcmp(tokens[0], "history") ==0 ){
         for (int i = 0; i<20; i++){
             printf("\n %d : %s",i+1 ,commands[i]);
         }
-        /*for (int i = 19; i<0; i--){
-            printf("\n %d : %s",i+1 ,commands[i]);
-        }*/
         printf("\n");
     
-        }
+    }
     else if(strncmp(tokens[0], "!", 1) ==0 ){
         char *ptr;
-        //printf("%ld", 20+strtol((tokens[0]+1), &ptr ,10));
-        if( strtol((tokens[0]+1), &ptr ,10) > 0){
-            parse(commands[strtol((tokens[0]+1), &ptr ,10)-1]);
-        }
-        else if (strtol((tokens[0]+1), &ptr ,10) < 0){
-            if (count != 19){
-                parse(commands[1+count+strtol((tokens[0]+1), &ptr ,10)-1]);
+        int no = strtol((tokens[0]+1), &ptr ,10);
+        if( count < 19){
+            if (no > 0 && no <= count){
+            printf("%s", commands[no-1]);
+            parse(commands[no-1]);
+            }
+            else if (no < 0 && no >= -count){
+                parse(commands[count+no]);
             }
             else{
-                 parse(commands[20+strtol((tokens[0]+1), &ptr ,10)]);
+                perror("Command not Found");
             }
+        }
+        else if( count == 19){
+            if(no > 0 && no <= 20){
+                printf("%s", commands[no-1]);
+                parse(commands[no-1]);
+            }
+            else if (no < 0 && no >= -20){
+            printf("%s", commands[20+no]);
+            parse(commands[20+no]);
+            }
+            else{
+                perror("Command not Found");
+            }
+        }
+        else{
+            perror("Command not Found");
         }
 
 

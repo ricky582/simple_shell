@@ -94,11 +94,9 @@ int parse(char input [512]){
     }
     else if(strcmp(tokens[0], "!!") ==0 ){
         if (count ==19){
-            printf("%s", commands[count]);
             parse(commands[count]);
         }
         else if (count != 0){
-            printf("%s", commands[count-1]);
             parse(commands[count-1]);
         }
         else{

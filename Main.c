@@ -27,22 +27,10 @@ userInput = malloc(sizeof(char) * 512);
             printf("%s\n", getenv("PATH"));
             return 0;
         }
-        if (count == 20){
-            int i;
-            for (i = 0; i<20; i++){
-                strcpy(commands[i], commands[i+1]);
-            }
-            strcpy(commands[20], userInput);
-
-        } else {
-            strcpy(commands[count], userInput);
-            count ++;
+        if (userInput[0] != '!'){
+            enterIntoArray(userInput);
         }
-        printf("\n%s",commands[count-1]);
-        //enterIntoArray(userInput);
-        printCount();
         parse(userInput);
-        
         printf("SSH>");
         
         

@@ -27,14 +27,25 @@ void setpath(char * tokens[]){
 
     
 }
+void enterIntoArray(char input [512]){
+    if (count == 19){
+            int i;
+            for (i = 0; i<19; i++){
+                strcpy(commands[i], commands[i+1]);
+            }
+            strcpy(commands[19], input);
+
+        } else {
+            strcpy(commands[count], input);
+            count ++;
+        }
+
+}
 void currentCWD(){
 
     printf("The current working directory: %s \n", getcwd(cwd, sizeof(cwd)));;
 }
 
-void printCount(){
-    printf("\n %d", count);
-}
 
 void cd(char * tokens[]){
     char *home = getenv("HOME");
@@ -69,20 +80,6 @@ void getpath(char * tokens[]){
 int parse(char input [512]){
     char * tokens[512];
     char * token = strtok(input, " \n\t|<>&;");
-    /*if (count == 20){
-            int i;
-            for (i = 0; i<20; i++){
-                strcpy(commands[i], commands[i+1]);
-            }
-            strcpy(commands[20], input);
-
-        } else {
-            strcpy(commands[count], input);
-            count ++;
-        }
-    
-    printf("\n%s",commands[count-1]);
-    */
     tokens[0] = token; 
     int i = 1;
      while(token != NULL ) {
@@ -96,9 +93,26 @@ int parse(char input [512]){
         execute(tokens);
     }
     else if(strcmp(tokens[0], "!!") ==0 ){
-        parse(commands[count-2]);
+        printf("\n %s", commands[count-2]);
+        parse(commands[count-1]);
     
         }
+        else if(strcmp(tokens[0], "history") ==0 ){
+        for (int i = 0; i<20; i++){
+            printf("\n %d : %s",i+1 ,commands[i]);
+        }
+        /*for (int i = 19; i<0; i--){
+            printf("\n %d : %s",i+1 ,commands[i]);
+        }*/
+        printf("\n");
+    
+        }
+    else if(strcmp(tokens[0], "!") ==0 ){
+        parse(commands[tokens]);
+
+
+    }
+
     else if(strcmp(tokens[0], "setpath") ==0 ){
          
         setpath(tokens);

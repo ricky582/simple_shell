@@ -97,25 +97,37 @@ int parse(char input [512]){
             printf("%s", commands[count]);
             parse(commands[count]);
         }
-        else{
+        else if (count != 0){
             printf("%s", commands[count-1]);
             parse(commands[count-1]);
         }
+        else{
+            perror("Command not Found");
+        }
     }
     else if(strcmp(tokens[0], "history") ==0 ){
-        for (int i = 0; i<20; i++){
-            printf("\n %d : %s",i+1 ,commands[i]);
+        if(tokens[1] != NULL){
+            printf("Error: Too many parameters\n");
         }
-        printf("\n");
-    
+        else if (count == 1){
+            printf("Error: No history\n");
+        }
+        else{
+            for (int i = 0; i<count; i++){
+                printf("%d : %s",i+1 ,commands[i]);
+            }
+        }
     }
     else if(strncmp(tokens[0], "!", 1) ==0 ){
         char *ptr;
         int no = strtol((tokens[0]+1), &ptr ,10);
+        int printed = 0;
         if( count < 19){
             if (no > 0 && no <= count){
-            printf("%s", commands[no-1]);
-            parse(commands[no-1]);
+                printed =1;
+                if (printed ==1){
+                    parse(commands[no-1]);
+                }
             }
             else if (no < 0 && no >= -count){
                 parse(commands[count+no]);
@@ -126,19 +138,17 @@ int parse(char input [512]){
         }
         else if( count == 19){
             if(no > 0 && no <= 20){
-                printf("%s", commands[no-1]);
                 parse(commands[no-1]);
             }
             else if (no < 0 && no >= -20){
-            printf("%s", commands[20+no]);
-            parse(commands[20+no]);
+                parse(commands[20+no]);
             }
             else{
                 perror("Command not Found");
             }
         }
         else{
-            perror("Command not Found");
+            perror("Command not Found"); //might not need this else
         }
 
 

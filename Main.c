@@ -9,6 +9,7 @@ int main(int argc, char *argv[]){
 
 char *userInput;
 userInput = malloc(sizeof(char) * 512);
+    count = 0;
     char cwd[256];
     char *original =getenv("PATH");
     char *home = getenv("HOME");
@@ -23,6 +24,9 @@ userInput = malloc(sizeof(char) * 512);
             setenv("PATH", original,1);
             printf("%s\n", getenv("PATH"));
             return 0;
+        }
+        if (userInput[0] != '!'){
+            enterIntoArray(userInput);
         }
         parse(userInput);
         printf("SSH>");   

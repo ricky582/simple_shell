@@ -6,23 +6,39 @@
 #include "stdlib.h"
 
 char cwd[256];
+//char commands[20][512];
+//int count = 0;
 
 void setpath(char * tokens[]){
     if(tokens[1] == NULL){
         printf("Error: nothing to set path to\n");
         //perror("Error: nothing to set path to");
-    }
+    }       
     else if (tokens[2] != NULL){
         printf("Error: Too many paremeters\n");}
-        //perror("Error:Too many paremeters");}
+        //perror("Error:Too many paremeters");}   
     else{
         setenv("PATH", tokens[1] , 1);
-        }  
+        }
+}
+
+void enterIntoArray(char input [512]){
+    if (count == 19){
+            int i;
+            for (i = 0; i<19; i++){
+                strcpy(commands[i], commands[i+1]);
+            }
+            strcpy(commands[19], input);
+        } else {
+            strcpy(commands[count], input);
+            count ++;
+        }
 }
 
 void currentCWD(){
     printf("The current working directory: %s \n", getcwd(cwd, sizeof(cwd)));;
 }
+
 
 void cd(char * tokens[]){
     char *home = getenv("HOME");
@@ -30,7 +46,6 @@ void cd(char * tokens[]){
         chdir(home);
         }
     else if(tokens[2] != NULL){
-
         perror("Too many parameters");
     }
     else{
@@ -46,16 +61,14 @@ void getpath(char * tokens[]){
         printf("Error: Too many paremeters\n");
         //perror("Error:Too many paremeters");
     }
-    else {printf("PATH : %s\n", getenv("PATH"));
-    }
-}
+    else {printf("PATH : %s\n", getenv("PATH"));}}
     
 int parse(char input [512]){
     char * tokens[512];
     char * token = strtok(input, " \n\t|<>&;");
     tokens[0] = token; 
     int i = 1;
-     while(token != NULL ) {
+     while(token != NULL ){
       token = strtok(NULL, " \n\t|<>&;");
       tokens[i] = token;
       i++;
@@ -63,7 +76,24 @@ int parse(char input [512]){
     if(tokens[0] == NULL){
         execute(tokens);
     }
+    else if(strcmp(tokens[0], "!!") ==0 ){
+        printf("\n %s", commands[count-2]);
+        parse(commands[count-1]);
+        }
+        else if(strcmp(tokens[0], "history") ==0 ){
+        for (int i = 0; i<20; i++){
+            printf("\n %d : %s",i+1 ,commands[i]);
+        }
+        /*for (int i = 19; i<0; i--){
+            printf("\n %d : %s",i+1 ,commands[i]);
+        }*/
+        printf("\n");
+        }
+    else if(strcmp(tokens[0], "!") ==0 ){
+        parse(commands[tokens]);
+    }
     else if(strcmp(tokens[0], "setpath") ==0 ){
+         
         setpath(tokens);
         }
     else if(strcmp(tokens[0], "getpath") ==0 ){
@@ -82,7 +112,6 @@ int parse(char input [512]){
 
 int execute(char * tokens[]){
 char * token =tokens[0] ;
-
 pid_t pid = fork(); 
 if (pid < 0){
     perror("Error!");

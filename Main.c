@@ -3,29 +3,36 @@
 #include <signal.h>
 #include "header.h"
 #include "Methods.c"
-#include <stdlib.h>
+#include "stdlib.h"
 
-int status =0;
-String input, tokens[512];
+int main(int argc, char *argv[]){
 
-int main(void){
-do {
-
-printf("SSH>");
-
-input = malloc(512 * sizeof(char));
-
-reader(input);
-
-parse(input,tokens);
-
-status= execute(tokens);
-
-free(input);
+char *userInput;
+userInput = malloc(sizeof(char) * 512);
+    count = 0;
+    char cwd[256];
+    char *original =getenv("PATH");
+    char *home = getenv("HOME");
+    chdir(home);
+    printf("SSH>");
+    while(fgets(userInput, 512, stdin)){  
+        //printf("userInput:%s",userInput);
+        if(*(userInput+strlen(userInput)-1) != '\n'){
+            for (int c; (c = getchar()) != EOF && c != '\n';);
+        } 
+        if(strncmp(userInput, "exit", 4) ==0) {
+             setenv("PATH", original,1);
+            printf("%s\n", getenv("PATH"));
+         save_file();
+            return 0;
+        }
+        if (userInput[0] != '!'){
+            enterIntoArray(userInput);
+        }
+        parse(userInput);
+        printf("SSH>");   
+    }
+    setenv("PATH", original,1);
+    printf("%s\n", getenv("PATH"));
+    return 0;
 }
-while (status == 0);{
-
-return 0;}
-}
-
-

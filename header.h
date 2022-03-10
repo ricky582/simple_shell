@@ -4,8 +4,14 @@
 #include <signal.h>
 #include <unistd.h>
 
-typedef char* String;
-
-void parse(String input, String tokens[]);
-void reader();
-int execute(String tokens[]);
+char commands[19][511];
+int count;
+void enterIntoArray(char input [512]);
+int parse(char input [512]);
+int reader();
+int execute(char * tokens[]);
+void setpath(char * tokens[]);
+void currentCWD();
+void cd(char * tokens[]);
+void getpath(char * tokens[]);
+void save_file();

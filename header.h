@@ -4,10 +4,11 @@
 #include <signal.h>
 #include <unistd.h>
 
-char commands[20][512];
+char commands[19][511];
 int count;
 
-void printCount();
+
+void enterIntoArray(char input [512]);
 int parse(char input [512]);
 int reader();
 int execute(char * tokens[]);

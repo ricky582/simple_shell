@@ -94,8 +94,12 @@ int parse(char input [512]){
     }
     else if(strcmp(tokens[0], "!!") ==0 ){
         printf("\n %s", commands[count-2]);
-        parse(commands[count-1]);
-    
+            if (count ==19){
+                parse(commands[count]);
+            }
+            else{
+                parse(commands[count-1]);
+            }
         }
         else if(strcmp(tokens[0], "history") ==0 ){
         for (int i = 0; i<20; i++){
@@ -108,7 +112,7 @@ int parse(char input [512]){
     
         }
     else if(strcmp(tokens[0], "!") ==0 ){
-        parse(commands[tokens]);
+        //parse(commands[tokens]);
 
 
     }

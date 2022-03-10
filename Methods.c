@@ -94,12 +94,12 @@ int parse(char input [512]){
     }
     else if(strcmp(tokens[0], "!!") ==0 ){
         printf("\n %s", commands[count-2]);
-            if (count ==19){
-                parse(commands[count]);
-            }
-            else{
-                parse(commands[count-1]);
-            }
+        if (count ==19){
+            parse(commands[count]);
+        }
+        else{
+            parse(commands[count-1]);
+        }
         }
         else if(strcmp(tokens[0], "history") ==0 ){
         for (int i = 0; i<20; i++){
@@ -111,8 +111,20 @@ int parse(char input [512]){
         printf("\n");
     
         }
-    else if(strcmp(tokens[0], "!") ==0 ){
-        //parse(commands[tokens]);
+    else if(strncmp(tokens[0], "!", 1) ==0 ){
+        char *ptr;
+        //printf("%ld", 20+strtol((tokens[0]+1), &ptr ,10));
+        if( strtol((tokens[0]+1), &ptr ,10) > 0){
+            parse(commands[strtol((tokens[0]+1), &ptr ,10)-1]);
+        }
+        else if (strtol((tokens[0]+1), &ptr ,10) < 0){
+            if (count != 19){
+                parse(commands[1+count+strtol((tokens[0]+1), &ptr ,10)-1]);
+            }
+            else{
+                 parse(commands[20+strtol((tokens[0]+1), &ptr ,10)]);
+            }
+        }
 
 
     }

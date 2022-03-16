@@ -7,6 +7,13 @@
 char commands[19][511];
 int count;
 
+typedef struct Map{
+    char *key[511];
+    char *value[511];
+} map ;
+
+map alias[10];
+
 
 void enterIntoArray(char input [512]);
 int parse(char input [512]);

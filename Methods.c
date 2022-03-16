@@ -4,9 +4,13 @@
 #include <unistd.h>
 #include "header.h"
 #include "stdlib.h"
+
+
 char cwd[256];
-//char commands[20][512];
-//int count = 0;
+map alias[10];
+int size = 0;
+int alSize = 0;
+
 
 void setpath(char * tokens[]){
     if(tokens[1] == NULL){
@@ -73,15 +77,32 @@ void getpath(char * tokens[]){
 
     
     else {printf("PATH : %s\n", getenv("PATH"));}}
-    
 
 
+void unalias(char * tokens){
+    int found = 0;
+    for (int i = 0; i<alSize;i++){
+        if (strcmp(alias[i].key[0], tokens) == 0){
+            while (i+1 != alSize){
+                strcpy(alias[i].key[0], alias[i+1].key[0]);
+                strcpy(alias[i].value[0], alias[i+1].value[0]);
+                i++;
+            }
+            found = 1;
+            alSize--;
+        }
+    }
+    if (found == 0){
+        printf("Error: No such alias to remove!\n");
+    }
+}
 
 int parse(char input [512]){
     char * tokens[512];
     char * token = strtok(input, " \n\t|<>&;");
     tokens[0] = token; 
     int i = 1;
+    int found = 0;
      while(token != NULL ) {
       token = strtok(NULL, " \n\t|<>&;");
       tokens[i] = token;
@@ -89,8 +110,31 @@ int parse(char input [512]){
       i++;
       
       }
+    if(tokens[0] != NULL){
+        for (int i = 0; i<alSize;i++){
+            if (strcmp(*(alias[i].key), tokens[0]) == 0){
+                char *val = malloc(511);
+                int j = 1;
+                strcat(val, *(alias[i].value));
+                while (tokens[j] != NULL){
+                    strcat(val, " ");
+                    strcat(val, tokens[j]);
+                    j++;
+                }
+                char *saveVal = malloc(511); //command must be saved before it is parsed for parameters to remain
+                strcpy(saveVal, alias[i].value[0]);
+                parse(val);
+                strcpy(alias[i].value[0], saveVal);
+                found = 1;
+            }
+        }
+    }
+    
+
     if(tokens[0] == NULL){
-        execute(tokens);
+        if(found == 0){
+            execute(tokens);
+        }
     }
     else if(strcmp(tokens[0], "!!") ==0 ){
         if (count ==19){
@@ -112,7 +156,7 @@ int parse(char input [512]){
         }
         else{
             for (int i = 0; i<count; i++){
-                printf("%d : %s",i+1 ,commands[i]);
+                printf("%d : %s\n",i+1 ,commands[i]);
             }
         }
     }
@@ -151,6 +195,58 @@ int parse(char input [512]){
 
 
     }
+    else if(strcmp(tokens[0], "unalias") ==0 ){   
+        if(tokens[1] == NULL){
+            printf("Error: Not enough parameters\n");
+        }
+        else if(tokens[2] != NULL){
+            printf("Error: Too many parameters\n");
+        }
+        else{
+            unalias(tokens[1]);
+        }
+    }
+    else if(strcmp(tokens[0], "alias") ==0 ){
+        if (tokens[1] != NULL && tokens[2] == NULL){
+            printf("Error: Not enough Parameters\n");
+        }
+        else if (tokens[1] == NULL){
+            if (alSize == 0){
+                printf("No aliases set yet\n");
+            }
+            else {
+                for (int i = 0; i<alSize;i++){
+                    printf("%d. Key: %s  Value: %s\n", (i+1), *(alias[i].key), *(alias[i].value));
+                }
+            }
+        }
+        else if (alSize == 10){
+            printf("Error: Maximum aliases reached!\n");
+        }
+        else{
+            for (int i = 0; i<alSize;i++){
+                if (strcmp(*(alias[i].key), tokens[1]) == 0){
+                    printf("Alias already exists!\n");
+                    printf("Overwriting...\n");
+                    unalias(tokens[1]);
+                }
+            }
+            char *val = malloc(511);
+            int i = 3;
+            strcat(val, tokens[2]);
+            while (tokens[i] != NULL){
+                strcat(val, " ");
+                strcat(val, tokens[i]);
+                i++;
+            }
+            alias[alSize].key[0] = malloc(511);
+            alias[alSize].value[0] = malloc(511);
+            strcpy(alias[alSize].key[0], tokens[1]);
+
+            strcpy(alias[alSize].value[0], val);
+            alSize++;
+        }
+    }
 
     else if(strcmp(tokens[0], "setpath") ==0 ){
          
@@ -170,9 +266,12 @@ int parse(char input [512]){
         cd(tokens);
 
     }
-      else{
-          execute(tokens);}
-      return 0;
+    else{
+        if (found == 0) {
+            execute(tokens);
+        }
+    }
+    return 0;
 }
 
 

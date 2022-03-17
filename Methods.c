@@ -301,37 +301,65 @@ void save_file(){
     }
     fclose(file);
     }
+
+    file= fopen(".aliases.txt","w");
+    if(file==NULL){
+        printf("This file does not seem to exist");
+        exit(1);
+    }else{
+
+  
+     for (int i = 0; i<alSize; i++){
+         
+        fprintf(file,"%d%s %s\n",i+1 , aliasList[i].key[0], aliasList[i].value[0]);
+    }
+    fclose(file);
+    }
+}
+
+void load_file(){
+    char *line;
+    char *key[511];
+    char *value[511];
+    int i;
+    line = malloc(512);
+    FILE *file =NULL;
+    file= fopen(".aliases.txt","r");
+    if(file!=NULL && fgets(line, 512, file) != NULL){
+        do {
+            i = strtol(line, &line, 10);
+            if (i>0 && i<=10){
+                key[0] = malloc(512);
+                value[0] = malloc(512);
+                key[0] = strtok(line, " ");
+                if (key != NULL){
+                    value[0] = strtok(NULL, "\n");
+                    if (value[0] != NULL){
+                        alias(*key, *value);
+                    }
+                }
+            }
+        }
+        while (fgets(line, 512, file) != NULL);
+    }
 }
 
 
 int execute(char * tokens[]){
-char * token =tokens[0] ;
-
-
-
-pid_t pid = fork(); 
-if (pid < 0){
-    perror("Error!");
-
+    char * token =tokens[0] ;
+    pid_t pid = fork(); 
+    if (pid < 0) {
+        perror("Error!");
+    }
+    else if (pid  == 0) {
+        if (execvp(tokens[0], tokens) == -1) {
+            char * errormsg = tokens[0];
+            perror(errormsg);
+            exit(0);
+        }
+    }
+    else {
+        wait(NULL);
+    }
+    return 0;
 }
-else if (pid  == 0){
-
-if(execvp(tokens[0], tokens)==-1);{
-    char * errormsg = tokens[0];
-    perror(errormsg);
-
-
-    exit(0);
-}
-}
-else{
-wait(NULL);
-
-}
-
-return 0;
-
-}
-
-
-

@@ -4,8 +4,6 @@
 #include "Methods.c"
 #include "stdlib.h"
 
-
-
 int main(int argc, char *argv[]){
 
 char *userInput;
@@ -16,28 +14,24 @@ userInput = malloc(sizeof(char) * 512);
     char *home = getenv("HOME");
     chdir(home);
     printf("SSH>");
-    while(fgets(userInput, 512, stdin)){
+    while(fgets(userInput, 512, stdin)){  
         //printf("userInput:%s",userInput);
         if(*(userInput+strlen(userInput)-1) != '\n'){
             for (int c; (c = getchar()) != EOF && c != '\n';);
         } 
         if(strncmp(userInput, "exit", 4) ==0) {
-            setenv("PATH", original,1);
+             setenv("PATH", original,1);
             printf("%s\n", getenv("PATH"));
+         save_file();
             return 0;
         }
         if (userInput[0] != '!'){
             enterIntoArray(userInput);
         }
         parse(userInput);
-        printf("SSH>");
-        
-        
+        printf("SSH>");   
     }
     setenv("PATH", original,1);
     printf("%s\n", getenv("PATH"));
     return 0;
-
-
 }
-

@@ -12,7 +12,7 @@ typedef struct Map{
     char *value[511];
 } map ;
 
-map alias[10];
+map aliasList[10];
 
 
 void enterIntoArray(char input [512]);

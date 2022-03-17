@@ -7,7 +7,7 @@
 
 
 char cwd[256];
-map alias[10];
+map aliasList[10];
 int size = 0;
 int alSize = 0;
 
@@ -15,12 +15,10 @@ int alSize = 0;
 void setpath(char * tokens[]){
     if(tokens[1] == NULL){
         printf("Error: nothing to set path to\n");
-        //perror("Error: nothing to set path to");
     }
         
     else if (tokens[2] != NULL){
         printf("Error: Too many paremeters\n");}
-        //perror("Error:Too many paremeters");}
         
     else{
 
@@ -72,7 +70,6 @@ void cd(char * tokens[]){
 void getpath(char * tokens[]){
     if(tokens[1] != NULL){
         printf("Error: Too many paremeters\n");
-        //perror("Error:Too many paremeters");
     }
 
     
@@ -81,19 +78,44 @@ void getpath(char * tokens[]){
 
 void unalias(char * tokens){
     int found = 0;
-    for (int i = 0; i<alSize;i++){
-        if (strcmp(alias[i].key[0], tokens) == 0){
-            while (i+1 != alSize){
-                strcpy(alias[i].key[0], alias[i+1].key[0]);
-                strcpy(alias[i].value[0], alias[i+1].value[0]);
-                i++;
+    if (alSize == 0){
+        printf("Error: Alias list is empty!\n");
+    }
+    else{
+        for (int i = 0; i<alSize;i++){
+            if (strcmp(aliasList[i].key[0], tokens) == 0){
+                while (i+1 != alSize){
+                    strcpy(aliasList[i].key[0], aliasList[i+1].key[0]);
+                    strcpy(aliasList[i].value[0], aliasList[i+1].value[0]);
+                    i++;
+                }
+                found = 1;
+                alSize--;
             }
-            found = 1;
-            alSize--;
+        }
+        if (found == 0){
+            printf("Error: No such alias to remove!\n");
         }
     }
-    if (found == 0){
-        printf("Error: No such alias to remove!\n");
+}
+
+void alias(char *key, char *value){
+    for (int i = 0; i<alSize;i++){
+        if (strcmp(*(aliasList[i].key), key) == 0){
+            printf("Alias already exists!\n");
+            printf("Overwriting...\n");
+            unalias(key);
+        }
+    }
+    if (alSize == 10){
+        printf("Error: Maximum aliases reached!\n");
+    }
+    else{
+        aliasList[alSize].key[0] = malloc(511);
+        aliasList[alSize].value[0] = malloc(511);
+        strcpy(aliasList[alSize].key[0], key);
+        strcpy(aliasList[alSize].value[0], value);
+        alSize++;
     }
 }
 
@@ -112,19 +134,19 @@ int parse(char input [512]){
       }
     if(tokens[0] != NULL){
         for (int i = 0; i<alSize;i++){
-            if (strcmp(*(alias[i].key), tokens[0]) == 0){
+            if (strcmp(*(aliasList[i].key), tokens[0]) == 0){
                 char *val = malloc(511);
                 int j = 1;
-                strcat(val, *(alias[i].value));
+                strcat(val, *(aliasList[i].value));
                 while (tokens[j] != NULL){
                     strcat(val, " ");
                     strcat(val, tokens[j]);
                     j++;
                 }
                 char *saveVal = malloc(511); //command must be saved before it is parsed for parameters to remain
-                strcpy(saveVal, alias[i].value[0]);
+                strcpy(saveVal, aliasList[i].value[0]);
                 parse(val);
-                strcpy(alias[i].value[0], saveVal);
+                strcpy(aliasList[i].value[0], saveVal);
                 found = 1;
             }
         }
@@ -216,35 +238,26 @@ int parse(char input [512]){
             }
             else {
                 for (int i = 0; i<alSize;i++){
-                    printf("%d. Key: %s  Value: %s\n", (i+1), *(alias[i].key), *(alias[i].value));
+                    printf("%d. Key: %s  Value: %s\n", (i+1), *(aliasList[i].key), *(aliasList[i].value));
                 }
             }
-        }
-        else if (alSize == 10){
-            printf("Error: Maximum aliases reached!\n");
         }
         else{
-            for (int i = 0; i<alSize;i++){
-                if (strcmp(*(alias[i].key), tokens[1]) == 0){
-                    printf("Alias already exists!\n");
-                    printf("Overwriting...\n");
-                    unalias(tokens[1]);
+            
+            if (alSize == 10){
+                printf("Error: Maximum aliases reached!\n");
+            }
+            else{
+                char *val = malloc(511);
+                int i = 3;
+                strcat(val, tokens[2]);
+                while (tokens[i] != NULL){
+                    strcat(val, " ");
+                    strcat(val, tokens[i]);
+                    i++;
                 }
+                alias(tokens[1], val);
             }
-            char *val = malloc(511);
-            int i = 3;
-            strcat(val, tokens[2]);
-            while (tokens[i] != NULL){
-                strcat(val, " ");
-                strcat(val, tokens[i]);
-                i++;
-            }
-            alias[alSize].key[0] = malloc(511);
-            alias[alSize].value[0] = malloc(511);
-            strcpy(alias[alSize].key[0], tokens[1]);
-
-            strcpy(alias[alSize].value[0], val);
-            alSize++;
         }
     }
 
@@ -252,13 +265,13 @@ int parse(char input [512]){
          
         setpath(tokens);
     
-        }
+    }
 
     else if(strcmp(tokens[0], "getpath") ==0 ){
     
         getpath(tokens);
    
-        }
+    }
     else if(strcmp(tokens[0], "currentCWD") ==0 ){
         currentCWD();   
     }

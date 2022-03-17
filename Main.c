@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
-#include "header.h"
 #include "Methods.c"
 #include "stdlib.h"
 

@@ -28,8 +28,12 @@ userInput = malloc(sizeof(char) * 512);
             save_file_alias();
             return 0;
         }
+
+        char *save = malloc(512);
         if (userInput[0] != '!'){
+            strcpy(save, userInput);
             enterIntoArray(userInput);
+            strcpy(userInput, save);
         }
         parse(userInput);
         printf("SSH>");   

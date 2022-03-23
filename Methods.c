@@ -24,19 +24,39 @@ void setpath(char * tokens[]){
     
 }
 void enterIntoArray(char input [512]){
-    if (count == 19){
-            int i;
-            for (i = 0; i<19; i++){
-                strcpy(commands[i], commands[i+1]);
+    char * tokens[512];
+    char * token = strtok(input, " \n\t|<>&;");
+    tokens[0] = token; 
+    int i = 1;
+     while(token != NULL ) {
+      token = strtok(NULL, " \n\t|<>&;");
+      tokens[i] = token;
+      i++;
+      
+      }
+      if (tokens[0] != NULL){
+        char *val = malloc(511);
+        strcat(val, tokens[0]);
+        int i = 1;
+        while (tokens[i] != NULL){
+            strcat(val, " ");
+            strcat(val, tokens[i]);
+            i++;
+        }
+        if (count == 20){
+            int j;
+            for (j = 0; j<19; j++){
+                strcpy(commands[j], commands[j+1]);
             }
-            strcpy(commands[19], input);
+            strcpy(commands[19], val);
             fullLoop = 1;
 
 
         } else {
-            strcpy(commands[count], input);
+            strcpy(commands[count], val);
             count ++;
         }
+    }
 }
 
 void currentCWD(){
@@ -124,7 +144,7 @@ int parse(char input [512]){
      while(token != NULL ) {
       token = strtok(NULL, " \n\t|<>&;");
       tokens[i] = token;
-      
+
       i++;
       
       }
@@ -147,7 +167,6 @@ int parse(char input [512]){
             }
         }
     }
-    
 
     if(tokens[0] == NULL){
         if(found == 0){
@@ -174,12 +193,12 @@ int parse(char input [512]){
         }
         else if (fullLoop == 1){
             for (int i = 0; i<20; i++){
-                printf("%d  %s",i+1 ,commands[i]);
+                printf("%d  %s\n",i+1 ,commands[i]);
             }
         }
         else{
             for (int i = 0; i<count; i++){
-                printf("%d  %s",i+1 ,commands[i]);
+                printf("%d  %s\n",i+1 ,commands[i]);
             }
         }
     }
@@ -201,7 +220,7 @@ int parse(char input [512]){
                 printf("no command at this number");
             }
         }
-        else if( count == 19){
+        else if( count == 20){
             if(no > 0 && no <= 20){
                 parse(commands[no-1]);
             }
@@ -209,7 +228,7 @@ int parse(char input [512]){
                 parse(commands[20+no]);
             }
             else{
-                printf("number is out of range, please use a number between -20 and 20 that is not 0");
+                printf("number is out of range, please use a number between -20 and 20 that is not 0\n");
             }
         }
         else{
@@ -316,7 +335,7 @@ void save_file_hist(){
   
      for (int i = 0; i<count; i++){
          
-                fprintf(file,"%s" ,commands[i]);
+                fprintf(file,"%s\n" ,commands[i]);
     }
     fclose(file);
     }
@@ -356,14 +375,10 @@ void load_file_hist(){
         printf("This file does not seem to exist");
         exit(1);
     }else{
-         char historyLine[512];
-
+         char *historyLine = malloc(512);
         while(fgets(historyLine, 512, file) != NULL) {
+            historyLine = strtok(historyLine, "\n");
             enterIntoArray(historyLine);
-
-
-
-        
 
     }
     fclose(file);

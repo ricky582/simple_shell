@@ -5,10 +5,6 @@
 #include "header.h"
 #include "stdlib.h"
 char cwd[256];
-map aliasList[10];
-int size = 0;
-int alSize = 0;
-
 
 void setpath(char * tokens[]){
     if(tokens[1] == NULL){
@@ -308,7 +304,7 @@ void save_file_alias(){
     }
 }
 
-void save_file(){
+void save_file_hist(){
     
     FILE *file =NULL;
     file= fopen(".hist_list.txt","w");
@@ -353,7 +349,7 @@ void load_file_alias(){
     }
 }
 
-void load_file(){
+void load_file_hist(){
     FILE *file = NULL;
     file = fopen(".hist_list.txt","r");
     if(file==NULL){

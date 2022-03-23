@@ -14,7 +14,7 @@ userInput = malloc(sizeof(char) * 512);
     char *home = getenv("HOME");
     chdir(home);
     load_file_alias();
-    load_file();
+    load_file_hist();
     printf("SSH>");
     while(fgets(userInput, 512, stdin)){  
         //printf("userInput:%s",userInput);
@@ -24,7 +24,7 @@ userInput = malloc(sizeof(char) * 512);
         if(strncmp(userInput, "exit", 4) ==0) {
              setenv("PATH", original,1);
             printf("%s\n", getenv("PATH"));
-            save_file();
+            save_file_hist();
             save_file_alias();
             return 0;
         }
@@ -37,6 +37,6 @@ userInput = malloc(sizeof(char) * 512);
     setenv("PATH", original,1);
     printf("%s\n", getenv("PATH"));
     save_file_alias();
-    save_file();
+    save_file_hist();
     return 0;
 }

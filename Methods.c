@@ -34,13 +34,15 @@ void enterIntoArray(char input [512]){
                 strcpy(commands[i], commands[i+1]);
             }
             strcpy(commands[19], input);
+            fullLoop = 1;
+
 
         } else {
             strcpy(commands[count], input);
             count ++;
         }
-
 }
+
 void currentCWD(){
 
     printf("The current working directory: %s \n", getcwd(cwd, sizeof(cwd)));;
@@ -171,12 +173,17 @@ int parse(char input [512]){
         if(tokens[1] != NULL){
             printf("Error: Too many parameters\n");
         }
-        else if (count == 1){
+        else if (count == 0){
             printf("Error: No history\n");
+        }
+        else if (fullLoop == 1){
+            for (int i = 0; i<20; i++){
+                printf("%d  %s",i+1 ,commands[i]);
+            }
         }
         else{
             for (int i = 0; i<count; i++){
-                printf("%d : %s\n",i+1 ,commands[i]);
+                printf("%d  %s",i+1 ,commands[i]);
             }
         }
     }
@@ -195,7 +202,7 @@ int parse(char input [512]){
                 parse(commands[count+no]);
             }
             else{
-                perror("Command not Found");
+                printf("no command at this number");
             }
         }
         else if( count == 19){
@@ -206,14 +213,12 @@ int parse(char input [512]){
                 parse(commands[20+no]);
             }
             else{
-                perror("Command not Found");
+                printf("number is out of range, please use a number between -20 and 20 that is not 0");
             }
         }
         else{
             perror("Command not Found"); //might not need this else
         }
-
-
     }
     else if(strcmp(tokens[0], "unalias") ==0 ){   
         if(tokens[1] == NULL){
@@ -285,23 +290,9 @@ int parse(char input [512]){
     return 0;
 }
 
-void save_file(){
+void save_file_alias(){
     
     FILE *file =NULL;
-    file= fopen(".hist_list.txt","w");
-    if(file==NULL){
-        printf("This file does not seem to exist");
-        exit(1);
-    }else{
-
-  
-     for (int i = 0; i<count; i++){
-         
-                fprintf(file,"%d  %s",i+1 ,commands[i]);
-    }
-    fclose(file);
-    }
-
     file= fopen(".aliases.txt","w");
     if(file==NULL){
         printf("This file does not seem to exist");
@@ -317,7 +308,25 @@ void save_file(){
     }
 }
 
-void load_file(){
+void save_file(){
+    
+    FILE *file =NULL;
+    file= fopen(".hist_list.txt","w");
+    if(file==NULL){
+        printf("This file does not seem to exist");
+        exit(1);
+    }else{
+
+  
+     for (int i = 0; i<count; i++){
+         
+                fprintf(file,"%s" ,commands[i]);
+    }
+    fclose(file);
+    }
+}
+
+void load_file_alias(){
     char *line;
     char *key[511];
     char *value[511];
@@ -344,6 +353,26 @@ void load_file(){
     }
 }
 
+void load_file(){
+    FILE *file = NULL;
+    file = fopen(".hist_list.txt","r");
+    if(file==NULL){
+        printf("This file does not seem to exist");
+        exit(1);
+    }else{
+         char historyLine[512];
+
+        while(fgets(historyLine, 512, file) != NULL) {
+            enterIntoArray(historyLine);
+
+
+
+        
+
+    }
+    fclose(file);
+    }
+}
 
 int execute(char * tokens[]){
     char * token =tokens[0] ;

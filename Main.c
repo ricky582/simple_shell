@@ -5,7 +5,7 @@
 #include "stdlib.h"
 
 int main(int argc, char *argv[]){
-
+fullLoop = 0;
 char *userInput;
 userInput = malloc(sizeof(char) * 512);
     count = 0;
@@ -13,6 +13,7 @@ userInput = malloc(sizeof(char) * 512);
     char *original =getenv("PATH");
     char *home = getenv("HOME");
     chdir(home);
+    load_file_alias();
     load_file();
     printf("SSH>");
     while(fgets(userInput, 512, stdin)){  
@@ -23,7 +24,8 @@ userInput = malloc(sizeof(char) * 512);
         if(strncmp(userInput, "exit", 4) ==0) {
              setenv("PATH", original,1);
             printf("%s\n", getenv("PATH"));
-         save_file();
+            save_file();
+            save_file_alias();
             return 0;
         }
         if (userInput[0] != '!'){
@@ -34,6 +36,7 @@ userInput = malloc(sizeof(char) * 512);
     }
     setenv("PATH", original,1);
     printf("%s\n", getenv("PATH"));
-     save_file();
+    save_file_alias();
+    save_file();
     return 0;
 }

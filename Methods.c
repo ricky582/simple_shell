@@ -24,38 +24,28 @@ void setpath(char * tokens[]){
     
 }
 void enterIntoArray(char input [512]){
-    char * tokens[512];
+    char *val = malloc(511);
     char * token = strtok(input, " \n\t|<>&;");
-    tokens[0] = token; 
-    int i = 1;
-     while(token != NULL ) {
-      token = strtok(NULL, " \n\t|<>&;");
-      tokens[i] = token;
-      i++;
-      
-      }
-      if (tokens[0] != NULL){
-        char *val = malloc(511);
-        strcat(val, tokens[0]);
-        int i = 1;
-        while (tokens[i] != NULL){
+    if (token != NULL){
+        strcpy(val, token);
+    while(token != NULL ) {
+        token = strtok(NULL, " \n\t|<>&;");
+        if (token != NULL){
             strcat(val, " ");
-            strcat(val, tokens[i]);
-            i++;
+            strcat(val, token);
         }
-        if (count == 20){
-            int j;
-            for (j = 0; j<19; j++){
-                strcpy(commands[j], commands[j+1]);
-            }
-            strcpy(commands[19], val);
-            fullLoop = 1;
-
-
-        } else {
-            strcpy(commands[count], val);
-            count ++;
+    }
+    if (count == 20){
+        int j;
+        for (j = 0; j<19; j++){
+            strcpy(commands[j], commands[j+1]);
         }
+        strcpy(commands[19], val);
+        fullLoop = 1;
+    } else {
+        strcpy(commands[count], val);
+        count ++;
+    }
     }
 }
 
@@ -335,7 +325,7 @@ void save_file_hist(){
   
      for (int i = 0; i<count; i++){
          
-                fprintf(file,"%s\n" ,commands[i]);
+                fprintf(file,"%d %s\n", i+1, commands[i]);
     }
     fclose(file);
     }
@@ -349,7 +339,10 @@ void load_file_alias(){
     line = malloc(512);
     FILE *file =NULL;
     file= fopen(".aliases.txt","r");
-    if(file!=NULL && fgets(line, 512, file) != NULL){
+    if(file==NULL){
+        printf("This file does not seem to exist\n");
+        exit(1);
+    }else if(file!=NULL && fgets(line, 512, file) != NULL){
         do {
             i = strtol(line, &line, 10);
             if (i>0 && i<=10){
@@ -366,19 +359,23 @@ void load_file_alias(){
         }
         while (fgets(line, 512, file) != NULL);
     }
+    fclose(file);
 }
 
 void load_file_hist(){
     FILE *file = NULL;
     file = fopen(".hist_list.txt","r");
     if(file==NULL){
-        printf("This file does not seem to exist");
+        printf("This file does not seem to exist\n");
         exit(1);
     }else{
          char *historyLine = malloc(512);
         while(fgets(historyLine, 512, file) != NULL) {
+            int i = strtol(historyLine, &historyLine, 10);
+            if (i>=1&&i<=20){
             historyLine = strtok(historyLine, "\n");
             enterIntoArray(historyLine);
+            }
 
     }
     fclose(file);

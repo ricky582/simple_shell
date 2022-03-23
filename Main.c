@@ -28,15 +28,24 @@ userInput = malloc(sizeof(char) * 512);
             save_file_alias();
             return 0;
         }
-
+    
         char *save = malloc(512);
         if (userInput[0] != '!'){
             strcpy(save, userInput);
             enterIntoArray(userInput);
             strcpy(userInput, save);
         }
+
+        
+        char commands2[19][511];
+        for (int i = 0; i<count;i++){
+            strcpy(commands2[i], commands[i]);
+        }
         parse(userInput);
         printf("SSH>");   
+        for (int i = 0; i<count;i++){
+            strcpy(commands[i], commands2[i]);
+        }
     }
     setenv("PATH", original,1);
     printf("%s\n", getenv("PATH"));

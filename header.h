@@ -6,11 +6,16 @@
 
 char commands[19][511];
 int count;
+int fullLoop;
+
 typedef struct Map{
     char *key[511];
     char *value[511];
 } map ;
+
 map aliasList[10];
+int alSize = 0;
+
 void enterIntoArray(char input [512]);
 int parse(char input [512]);
 int reader();
@@ -19,4 +24,7 @@ void setpath(char * tokens[]);
 void currentCWD();
 void cd(char * tokens[]);
 void getpath(char * tokens[]);
-void save_file();
+void save_file_alias();
+void save_file_hist();
+void load_file_alias();
+void load_file_hist();

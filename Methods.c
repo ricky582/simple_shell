@@ -6,9 +6,6 @@
 #include "stdlib.h"
 
 char cwd[256];
-map aliasList[10];
-int size = 0;
-int alSize = 0;
 
 void setpath(char * tokens[]){
     if(tokens[1] == NULL){
@@ -22,16 +19,29 @@ void setpath(char * tokens[]){
 }
 
 void enterIntoArray(char input [512]){
-    if (count == 19){
-            int i;
-            for (i = 0; i<19; i++){
-                strcpy(commands[i], commands[i+1]);
-            }
-            strcpy(commands[19], input);
-        } else {
-            strcpy(commands[count], input);
-            count ++;
+    char *val = malloc(511);
+    char * token = strtok(input, " \n\t|<>&;");
+    if (token != NULL){
+        strcpy(val, token);
+    while(token != NULL ) {
+        token = strtok(NULL, " \n\t|<>&;");
+        if (token != NULL){
+            strcat(val, " ");
+            strcat(val, token);
         }
+    }
+    if (count == 20){
+        int j;
+        for (j = 0; j<19; j++){
+            strcpy(commands[j], commands[j+1]);
+        }
+        strcpy(commands[19], val);
+        fullLoop = 1;
+    } else {
+        strcpy(commands[count], val);
+        count ++;
+    }
+    }
 }
 
 void currentCWD(){
@@ -156,8 +166,12 @@ int parse(char input [512]){
         if(tokens[1] != NULL){
             printf("Error: Too many parameters\n");
         }
-        else if (count == 1){
+        else if (count == 0){
             printf("Error: No history\n");
+        }
+        else if (fullLoop == 1){
+            for (int i = 0; i<20; i++);
+            printf("%d : %s\n",i+1 ,commands[i]);
         }
         else{
             for (int i = 0; i<count; i++){
@@ -183,7 +197,7 @@ int parse(char input [512]){
                 perror("Command not Found");
             }
         }
-        else if( count == 19){
+        else if( count == 20){
             if(no > 0 && no <= 20){
                 parse(commands[no-1]);
             }
@@ -262,15 +276,79 @@ int parse(char input [512]){
     return 0;
 }
 
-void save_file(){
+void save_file_alias(){
     FILE *file =NULL;
-    file= fopen(".hist_list.txt","w");
-    if(file == NULL){
+    file= fopen(".aliases.txt","w");
+    if(file==NULL){
         printf("This file does not seem to exist");
         exit(1);
+    } else{
+     for (int i = 0; i<alSize; i++){   
+        fprintf(file,"%d%s %s\n",i+1 , aliasList[i].key[0], aliasList[i].value[0]);
+    }
+    fclose(file);
+    }
+}
+
+void save_file_hist(){
+    FILE *file =NULL;
+    file= fopen(".hist_list.txt","w");
+    if(file==NULL){
+        printf("This file does not seem to exist");
+        exit(1);
+    } else{
+     for (int i = 0; i<count; i++){ 
+                fprintf(file,"%d %s\n", i+1, commands[i]);
+    }
+    fclose(file);
+    }
+}
+
+void load_file_alias(){
+    char *line;
+    char *key[511];
+    char *value[511];
+    int i;
+    line = malloc(512);
+    FILE *file =NULL;
+    file= fopen(".aliases.txt","r");
+    if(file==NULL){
+        printf("This file does not seem to exist\n");
+        exit(1);
+    }else if(file!=NULL && fgets(line, 512, file) != NULL){
+        do {
+            i = strtol(line, &line, 10);
+            if (i>0 && i<=10){
+                key[0] = malloc(512);
+                value[0] = malloc(512);
+                key[0] = strtok(line, " ");
+                if (key != NULL){
+                    value[0] = strtok(NULL, "\n");
+                    if (value[0] != NULL){
+                        alias(*key, *value);
+                    }
+                }
+            }
+        }
+        while (fgets(line, 512, file) != NULL);
+    }
+    fclose(file);
+}
+
+void load_file_hist(){
+    FILE *file = NULL;
+    file = fopen(".hist_list.txt","r");
+    if(file==NULL){
+        printf("This file does not seem to exist\n");
+        exit(1);
     }else{
-     for (int i = 0; i<count; i++){
-                fprintf(file,"%d  %s",i+1 ,commands[i]);
+         char *historyLine = malloc(512);
+        while(fgets(historyLine, 512, file) != NULL) {
+            int i = strtol(historyLine, &historyLine, 10);
+            if (i>=1&&i<=20){
+            historyLine = strtok(historyLine, "\n");
+            enterIntoArray(historyLine);
+            }
     }
     fclose(file);
     }
@@ -278,7 +356,6 @@ void save_file(){
 
 int execute(char * tokens[]){
 char * token =tokens[0] ;
-
 pid_t pid = fork(); 
 if (pid < 0){
     perror("Error!");

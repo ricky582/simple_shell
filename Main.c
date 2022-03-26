@@ -35,8 +35,6 @@ userInput = malloc(sizeof(char) * 512);
             enterIntoArray(userInput);
             strcpy(userInput, save);
         }
-
-        
         char commands2[19][511];
         for (int i = 0; i<count;i++){
             strcpy(commands2[i], commands[i]);

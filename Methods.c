@@ -296,39 +296,30 @@ int parse(char input [512]){
 }
 
 void save_file_alias(){
-    
     FILE *file =NULL;
-    file= fopen(".aliases.txt","w");
-    if(file==NULL){
-        printf("This file does not seem to exist");
-        exit(1);
-    }else{
-
-  
-     for (int i = 0; i<alSize; i++){
-         
+    char *dir = malloc(512);
+    char *home = malloc(512);
+    strcpy(home, getenv("HOME"));
+    dir = strcat(home, "/.aliases.txt");
+    file= fopen(dir,"w");
+    for (int i = 0; i<alSize; i++){
         fprintf(file,"%d%s %s\n",i+1 , aliasList[i].key[0], aliasList[i].value[0]);
     }
     fclose(file);
-    }
+    
 }
 
 void save_file_hist(){
-    
     FILE *file =NULL;
-    file= fopen(".hist_list.txt","w");
-    if(file==NULL){
-        printf("This file does not seem to exist");
-        exit(1);
-    }else{
-
-  
-     for (int i = 0; i<count; i++){
-         
-                fprintf(file,"%d %s\n", i+1, commands[i]);
+    char *dir = malloc(512);
+    char *home = malloc(512);
+    strcpy(home, getenv("HOME"));
+    dir = strcat(home, "/.hist_list.txt");
+    file= fopen(dir,"w");
+    for (int i = 0; i<count; i++){
+        fprintf(file,"%d %s\n", i+1, commands[i]);
     }
     fclose(file);
-    }
 }
 
 void load_file_alias(){
@@ -340,8 +331,8 @@ void load_file_alias(){
     FILE *file =NULL;
     file= fopen(".aliases.txt","r");
     if(file==NULL){
-        printf("This file does not seem to exist\n");
-        exit(1);
+        printf("Alias file not detected, creating new...\n");
+        file = fopen(".aliases.txt","w");
     }else if(file!=NULL && fgets(line, 512, file) != NULL){
         do {
             i = strtol(line, &line, 10);
@@ -366,8 +357,8 @@ void load_file_hist(){
     FILE *file = NULL;
     file = fopen(".hist_list.txt","r");
     if(file==NULL){
-        printf("This file does not seem to exist\n");
-        exit(1);
+        printf("History file not detected, creating new...\n");
+        file = fopen(".hist_list.txt","w");
     }else{
          char *historyLine = malloc(512);
         while(fgets(historyLine, 512, file) != NULL) {

@@ -5,11 +5,9 @@
 #include "stdlib.h"
 
 int main(int argc, char *argv[]){
-fullLoop = 0;
 char *userInput;
 userInput = malloc(sizeof(char) * 512);
     count = 0;
-    char cwd[256];
     char *original =getenv("PATH");
     char *home = getenv("HOME");
     chdir(home);

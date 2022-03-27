@@ -4,17 +4,18 @@
 #include <unistd.h>
 #include "header.h"
 #include "stdlib.h"
+
 char cwd[256];
 
 void setpath(char * tokens[]){
     if(tokens[1] == NULL){
         printf("Error: nothing to set path to\n");
-    }  
+    }
     else if (tokens[2] != NULL){
         printf("Error: Too many paremeters\n");} 
     else{
         setenv("PATH", tokens[1] , 1);
-        } 
+        }   
 }
 
 void enterIntoArray(char input [512]){
@@ -45,16 +46,11 @@ void enterIntoArray(char input [512]){
                 strcpy(commands[j], commands[j+1]);
             }
             strcpy(commands[19], val);
-            fullLoop = 1;
         } else {
             strcpy(commands[count], val);
             count ++;
         }
     }
-}
-
-void currentCWD(){
-    printf("The current working directory: %s \n", getcwd(cwd, sizeof(cwd)));;
 }
 
 void cd(char * tokens[]){
@@ -63,15 +59,13 @@ void cd(char * tokens[]){
         chdir(home);
         }
     else if(tokens[2] != NULL){
-
-        perror("Too many parameters");
+        printf("Error: Too many parameters");
     }
     else{
         if (chdir(tokens[1]) != 0){
            char * wrong = tokens[1]; 
             perror(wrong);
         };
-
     }
 }
 
@@ -79,8 +73,10 @@ void getpath(char * tokens[]){
     if(tokens[1] != NULL){
         printf("Error: Too many paremeters\n");
     }
-    else {printf("PATH : %s\n", getenv("PATH"));
-    }}
+    else {
+        printf("PATH : %s\n", getenv("PATH"));
+    }
+}
 
 void unalias(char * tokens){
     int found = 0;
@@ -110,6 +106,10 @@ void alias(char *key, char *value){
     int found;
     char *currValue = malloc(512);
     strcpy(currValue, value);
+    char *first = strtok(value, " \n\t|<>&;");
+    if (strcmp(key, first)==0){
+        status = -1;
+    }
     while (status ==0){
         found = 0;
         for (int i = 0; i<alSize;i++){
@@ -142,8 +142,7 @@ void alias(char *key, char *value){
         strcpy(aliasList[alSize].key[0], key);
         strcpy(aliasList[alSize].value[0], value);
         alSize++;
-    }
-    }
+    }}
     else printf("Alias would create a loop!\nAborting...\n");
 }
 
@@ -207,29 +206,18 @@ int parse(char input [512]){
         }
     }
     else if(strcmp(tokens[0], "!!") ==0 ){
-        if (count ==19){
-            parse(commands[count]);
-        }
-        else if (count != 0){
+        if (count > 0){
             parse(commands[count-1]);
         }
         else{
-            perror("Command not Found");
+            printf("Error: No history!\n");
         }
     }
     else if(strcmp(tokens[0], "history") ==0 ){
         if(tokens[1] != NULL){
             printf("Error: Too many parameters\n");
         }
-        else if (count == 0){
-            printf("Error: No history\n");
-        }
-        else if (fullLoop == 1){
-            for (int i = 0; i<20; i++){
-                printf("%d  %s\n",i+1 ,commands[i]);
-            }
-        }
-        else{
+        else {
             for (int i = 0; i<count; i++){
                 printf("%d  %s\n",i+1 ,commands[i]);
             }
@@ -239,7 +227,7 @@ int parse(char input [512]){
         char *ptr;
         int no = strtol((tokens[0]+1), &ptr ,10);
         int printed = 0;
-        if( count < 19){
+        if( count > 0){
             if (no > 0 && no <= count){
                 printed =1;
                 if (printed ==1){
@@ -250,22 +238,12 @@ int parse(char input [512]){
                 parse(commands[count+no]);
             }
             else{
-                printf("no command at this number\n");
-            }
-        }
-        else if( count == 20){
-            if(no > 0 && no <= 20){
-                parse(commands[no-1]);
-            }
-            else if (no < 0 && no >= -20){
-                parse(commands[20+no]);
-            }
-            else{
-                printf("number is out of range, please use a number between -20 and 20 that is not 0\n");
+                printf("No command at this number\n");
+                printf("Please use a number in the range -%d to %d that is not 0\n", count, count);
             }
         }
         else{
-            perror("Command not Found"); //might not need this else
+            printf("Error: No history!\n");
         }
     }
     else if(strcmp(tokens[0], "unalias") ==0 ){   
@@ -294,30 +272,22 @@ int parse(char input [512]){
             }
         }
         else{
-            if (alSize == 10){
-                printf("Error: Maximum aliases reached!\n");
+            char *val = malloc(511);
+            int i = 3;
+            strcat(val, tokens[2]);
+            while (tokens[i] != NULL){
+                strcat(val, " ");
+                strcat(val, tokens[i]);
+                i++;
             }
-            else{
-                char *val = malloc(511);
-                int i = 3;
-                strcat(val, tokens[2]);
-                while (tokens[i] != NULL){
-                    strcat(val, " ");
-                    strcat(val, tokens[i]);
-                    i++;
-                }
-                alias(tokens[1], val);
-            }
+            alias(tokens[1], val);
         }
     }
-    else if(strcmp(tokens[0], "setpath") ==0 ){ 
+    else if(strcmp(tokens[0], "setpath") ==0 ){
         setpath(tokens);
     }
     else if(strcmp(tokens[0], "getpath") ==0 ){
         getpath(tokens);
-    }
-    else if(strcmp(tokens[0], "currentCWD") ==0 ){
-        currentCWD();   
     }
     else if (strcmp(tokens[0], "cd") ==0 ){
         cd(tokens);
@@ -338,9 +308,9 @@ void save_file_alias(){
     dir = strcat(home, "/.aliases.txt");
     file= fopen(dir,"w");
     for (int i = 0; i<alSize; i++){
-        fprintf(file,"%d%s %s\n",i+1 , aliasList[i].key[0], aliasList[i].value[0]);
+        fprintf(file,"%d %s %s\n",i+1 , aliasList[i].key[0], aliasList[i].value[0]);
     }
-    fclose(file);  
+    fclose(file); 
 }
 
 void save_file_hist(){

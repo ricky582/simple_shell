@@ -4,16 +4,17 @@
 #include <unistd.h>
 #include "header.h"
 #include "stdlib.h"
-
 char cwd[256];
 
 void setpath(char * tokens[]){
     if(tokens[1] == NULL){
         printf("Error: nothing to set path to\n");
     }
+        
     else if (tokens[2] != NULL){
         printf("Error: Too many paremeters\n");} 
     else{
+
         setenv("PATH", tokens[1] , 1);
         }   
 }
@@ -66,6 +67,7 @@ void cd(char * tokens[]){
            char * wrong = tokens[1]; 
             perror(wrong);
         };
+
     }
 }
 
@@ -155,7 +157,9 @@ int parse(char input [512]){
      while(token != NULL ) {
       token = strtok(NULL, " \n\t|<>&;");
       tokens[i] = token;
+
       i++;
+      
       }
     if(tokens[0] != NULL){
         for (int i = 0; i<alSize;i++){
@@ -291,6 +295,7 @@ int parse(char input [512]){
     }
     else if (strcmp(tokens[0], "cd") ==0 ){
         cd(tokens);
+
     }
     else{
         if (found == 0) {

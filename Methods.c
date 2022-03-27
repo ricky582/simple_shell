@@ -12,17 +12,13 @@ void setpath(char * tokens[]){
     }
         
     else if (tokens[2] != NULL){
-        printf("Error: Too many paremeters\n");}
-        
+        printf("Error: Too many paremeters\n");} 
     else{
 
         setenv("PATH", tokens[1] , 1);
-        
-        }
-
-
-    
+        }   
 }
+
 void enterIntoArray(char input [512]){
     char *val = malloc(511);
     char * token = strtok(input, " \n\t|<>&;");
@@ -83,7 +79,6 @@ void getpath(char * tokens[]){
         printf("PATH : %s\n", getenv("PATH"));
     }
 }
-
 
 void unalias(char * tokens){
     int found = 0;
@@ -149,8 +144,7 @@ void alias(char *key, char *value){
         strcpy(aliasList[alSize].key[0], key);
         strcpy(aliasList[alSize].value[0], value);
         alSize++;
-    }
-    }
+    }}
     else printf("Alias would create a loop!\nAborting...\n");
 }
 
@@ -207,11 +201,9 @@ int parse(char input [512]){
                 parse(val);
                 strcpy(aliasList[i].value[0], saveVal);
                 }
-            
             }
         }
     }
-
     if(tokens[0] == NULL){
         if(found == 0){
             execute(tokens);
@@ -297,11 +289,9 @@ int parse(char input [512]){
     }
     else if(strcmp(tokens[0], "setpath") ==0 ){
         setpath(tokens);
-    
     }
     else if(strcmp(tokens[0], "getpath") ==0 ){
         getpath(tokens);
-   
     }
     else if (strcmp(tokens[0], "cd") ==0 ){
         cd(tokens);
@@ -325,8 +315,7 @@ void save_file_alias(){
     for (int i = 0; i<alSize; i++){
         fprintf(file,"%d %s %s\n",i+1 , aliasList[i].key[0], aliasList[i].value[0]);
     }
-    fclose(file);
-    
+    fclose(file); 
 }
 
 void save_file_hist(){
@@ -387,7 +376,6 @@ void load_file_hist(){
             historyLine = strtok(historyLine, "\n");
             enterIntoArray(historyLine);
             }
-
     }
     fclose(file);
     }

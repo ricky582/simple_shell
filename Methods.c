@@ -148,6 +148,47 @@ void alias(char *key, char *value){
     else printf("Alias would create a loop!\nAborting...\n");
 }
 
+int checkHistory(char *key, char *value, int c){
+    int isNext = 0;
+    char *nextVal = malloc(512);
+    int j = 0;
+    int safe = 1;
+    if (strcmp("!!", value)==0){
+        return 0;
+    }
+    else{
+        j = strtol(value+1, NULL, 10);
+        if (j > 0 && j <=count){
+            j = j-1;
+        }
+        else if ((j < 0 && j >=-count)){
+            j = count+j;
+        }
+    }
+    if (strcmp(commands[j], key)==0){
+        printf("History invocation aborted to prevent loop!\n");
+        return 1;
+    }
+    for (int i = 0; i<alSize;i++){
+        if(strcmp(commands[j], *(aliasList[i].key))==0 && isNext == 0){
+            if  (strncmp("!", aliasList[i].value[0], 1) == 0){
+                isNext = 1;
+                strcpy(value, aliasList[i].value[0]);
+                strcpy(nextVal, aliasList[i].value[0]);
+            }
+        }
+    }
+    if (isNext == 0){
+        return 0;
+    }
+    if (c == 20){
+        return 0;
+    }
+    else{
+        return checkHistory(key, nextVal, c+1);
+    }
+}
+
 int parse(char input [512]){
     char * tokens[512];
     char * token = strtok(input, " \n\t|<>&;");
@@ -166,26 +207,12 @@ int parse(char input [512]){
             if (strcmp(*(aliasList[i].key), tokens[0]) == 0){
                 found = 1;
                 int skip = 0;
-                if (strncmp("!", aliasList[i].value[0], 1) == 0){
-                    int j = 0;
-                    if (strcmp("!!", *(aliasList[i].value))==0){
-                        j = -1;
-                    }
-                    else{
-                        j = strtol(aliasList[i].value[0]+1, NULL, 10);
-                    }
-                    if (j > 0 && j <=20){
-                        if (strcmp(commands[j-1], *(aliasList[i].key))==0){
-                            printf("History invocation aborted to prevent loop!\n");
-                            skip=1;
-                        }
-                    }
-                    else if ((j < 0 && j >=-20)){
-                        if (strcmp(commands[count+j], *(aliasList[i].key))==0){
-                            printf("History invocation aborted to prevent loop!\n");
-                            skip=1;
-                        }
-                    }
+                if (strncmp("!", *(aliasList[i].value), 1)==0){
+                char *value = malloc(512);
+                char *key = malloc(512);
+                strcpy(value, aliasList[i].value[0]);
+                strcpy(key, aliasList[i].key[0]);
+                skip = checkHistory(key,value,0);
                 }
                 if (skip == 0){
                 char *val = malloc(511);
@@ -307,15 +334,14 @@ int parse(char input [512]){
 
 void save_file_alias(){
     FILE *file =NULL;
-    char *dir = malloc(512);
     char *home = malloc(512);
     strcpy(home, getenv("HOME"));
-    dir = strcat(home, "/.aliases.txt");
-    file= fopen(dir,"w");
+    home = strcat(home, "/.aliases.txt");
+    file= fopen(home,"w");
     for (int i = 0; i<alSize; i++){
-        fprintf(file,"%d %s %s\n",i+1 , aliasList[i].key[0], aliasList[i].value[0]);
+        fprintf(file,"%d%s %s\n",i+1 , aliasList[i].key[0], aliasList[i].value[0]);
     }
-    fclose(file); 
+    fclose(file);
 }
 
 void save_file_hist(){
@@ -369,15 +395,15 @@ void load_file_hist(){
         printf("History file not detected, creating new...\n");
         file = fopen(".hist_list.txt","w");
     }else{
-         char *historyLine = malloc(512);
+        char *historyLine = malloc(512);
         while(fgets(historyLine, 512, file) != NULL) {
             int i = strtol(historyLine, &historyLine, 10);
             if (i>=1&&i<=20){
-            historyLine = strtok(historyLine, "\n");
-            enterIntoArray(historyLine);
+                historyLine = strtok(historyLine, "\n");
+                enterIntoArray(historyLine);
             }
-    }
-    fclose(file);
+        }
+        fclose(file);
     }
 }
 

@@ -26,26 +26,36 @@ void setpath(char * tokens[]){
 void enterIntoArray(char input [512]){
     char *val = malloc(511);
     char * token = strtok(input, " \n\t|<>&;");
+    int exit = 0;
     if (token != NULL){
+        for (int i = 0; i<alSize; i++){
+            if (strcmp(token, aliasList[i].key[0]) == 0){
+                if (strncmp("!", aliasList[i].value[0], 1) == 0){
+                    exit = 1;
+                }
+            }
+        }
+    }
+    if (token != NULL && exit == 0){
         strcpy(val, token);
-    while(token != NULL ) {
-        token = strtok(NULL, " \n\t|<>&;");
-        if (token != NULL){
-            strcat(val, " ");
-            strcat(val, token);
+        while(token != NULL ) {
+            token = strtok(NULL, " \n\t|<>&;");
+            if (token != NULL){
+                strcat(val, " ");
+                strcat(val, token);
+            }
         }
-    }
-    if (count == 20){
-        int j;
-        for (j = 0; j<19; j++){
-            strcpy(commands[j], commands[j+1]);
+        if (count == 20){
+            int j;
+            for (j = 0; j<19; j++){
+                strcpy(commands[j], commands[j+1]);
+            }
+            strcpy(commands[19], val);
+            fullLoop = 1;
+        } else {
+            strcpy(commands[count], val);
+            count ++;
         }
-        strcpy(commands[19], val);
-        fullLoop = 1;
-    } else {
-        strcpy(commands[count], val);
-        count ++;
-    }
     }
 }
 
@@ -106,6 +116,26 @@ void unalias(char * tokens){
 }
 
 void alias(char *key, char *value){
+    int status = 0;
+    int found;
+    char *currValue = malloc(512);
+    strcpy(currValue, value);
+    while (status ==0){
+        found = 0;
+        for (int i = 0; i<alSize;i++){
+            if (strcmp(aliasList[i].key[0], currValue) == 0){
+                if (strcmp(aliasList[i].value[0], key) == 0){
+                    status = -1;
+                }
+                found =1;
+                strcpy(currValue, aliasList[i].value[0]);
+            }
+        }
+        if (found == 0){
+            status =1;
+        }
+    }
+    if(status == 1){
     for (int i = 0; i<alSize;i++){
         if (strcmp(*(aliasList[i].key), key) == 0){
             printf("Alias already exists!\n");
@@ -123,6 +153,8 @@ void alias(char *key, char *value){
         strcpy(aliasList[alSize].value[0], value);
         alSize++;
     }
+    }
+    else printf("Alias would create a loop!\nAborting...\n");
 }
 
 int parse(char input [512]){
@@ -141,6 +173,31 @@ int parse(char input [512]){
     if(tokens[0] != NULL){
         for (int i = 0; i<alSize;i++){
             if (strcmp(*(aliasList[i].key), tokens[0]) == 0){
+                found = 1;
+                int skip = 0;
+                if (strncmp("!", aliasList[i].value[0], 1) == 0){
+                    int j = 0;
+                    if (strcmp("!!", *(aliasList[i].value))==0){
+                        j = -1;
+                    }
+                    else{
+                        j = strtol(aliasList[i].value[0]+1, NULL, 10);
+                    }
+                    if (j > 0 && j <=20){
+                        if (strcmp(commands[j-1], *(aliasList[i].key))==0){
+                            printf("History invocation aborted to prevent loop!\n");
+                            skip=1;
+                        }
+                    }
+                    else if ((j < 0 && j >=-20)){
+                        if (strcmp(commands[count+j], *(aliasList[i].key))==0){
+                            printf("History invocation aborted to prevent loop!\n");
+                            skip=1;
+                        }
+                    }
+                }
+                
+                if (skip == 0){
                 char *val = malloc(511);
                 int j = 1;
                 strcat(val, *(aliasList[i].value));
@@ -153,7 +210,8 @@ int parse(char input [512]){
                 strcpy(saveVal, aliasList[i].value[0]);
                 parse(val);
                 strcpy(aliasList[i].value[0], saveVal);
-                found = 1;
+                }
+            
             }
         }
     }
@@ -207,7 +265,7 @@ int parse(char input [512]){
                 parse(commands[count+no]);
             }
             else{
-                printf("no command at this number");
+                printf("no command at this number\n");
             }
         }
         else if( count == 20){

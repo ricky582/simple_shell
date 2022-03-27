@@ -13,6 +13,8 @@ userInput = malloc(sizeof(char) * 512);
     char *original =getenv("PATH");
     char *home = getenv("HOME");
     chdir(home);
+    load_file_alias();
+    load_file_hist();
     printf("SSH>");
     while(fgets(userInput, 512, stdin)){  
         //printf("userInput:%s",userInput);

@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include "header.h"
 #include "stdlib.h"
-
 char cwd[256];
 
 void setpath(char * tokens[]){
@@ -12,35 +11,45 @@ void setpath(char * tokens[]){
         printf("Error: nothing to set path to\n");
     }  
     else if (tokens[2] != NULL){
-        printf("Error: Too many paremeters\n");}
+        printf("Error: Too many paremeters\n");} 
     else{
         setenv("PATH", tokens[1] , 1);
-        }
+        } 
 }
 
 void enterIntoArray(char input [512]){
     char *val = malloc(511);
     char * token = strtok(input, " \n\t|<>&;");
+    int exit = 0;
     if (token != NULL){
+        for (int i = 0; i<alSize; i++){
+            if (strcmp(token, aliasList[i].key[0]) == 0){
+                if (strncmp("!", aliasList[i].value[0], 1) == 0){
+                    exit = 1;
+                }
+            }
+        }
+    }
+    if (token != NULL && exit == 0){
         strcpy(val, token);
-    while(token != NULL ) {
-        token = strtok(NULL, " \n\t|<>&;");
-        if (token != NULL){
-            strcat(val, " ");
-            strcat(val, token);
+        while(token != NULL ) {
+            token = strtok(NULL, " \n\t|<>&;");
+            if (token != NULL){
+                strcat(val, " ");
+                strcat(val, token);
+            }
         }
-    }
-    if (count == 20){
-        int j;
-        for (j = 0; j<19; j++){
-            strcpy(commands[j], commands[j+1]);
+        if (count == 20){
+            int j;
+            for (j = 0; j<19; j++){
+                strcpy(commands[j], commands[j+1]);
+            }
+            strcpy(commands[19], val);
+            fullLoop = 1;
+        } else {
+            strcpy(commands[count], val);
+            count ++;
         }
-        strcpy(commands[19], val);
-        fullLoop = 1;
-    } else {
-        strcpy(commands[count], val);
-        count ++;
-    }
     }
 }
 
@@ -54,6 +63,7 @@ void cd(char * tokens[]){
         chdir(home);
         }
     else if(tokens[2] != NULL){
+
         perror("Too many parameters");
     }
     else{
@@ -61,6 +71,7 @@ void cd(char * tokens[]){
            char * wrong = tokens[1]; 
             perror(wrong);
         };
+
     }
 }
 
@@ -68,10 +79,8 @@ void getpath(char * tokens[]){
     if(tokens[1] != NULL){
         printf("Error: Too many paremeters\n");
     }
-    else{
-        printf("PATH : %s\n", getenv("PATH"));
-    }
-}
+    else {printf("PATH : %s\n", getenv("PATH"));
+    }}
 
 void unalias(char * tokens){
     int found = 0;
@@ -97,6 +106,26 @@ void unalias(char * tokens){
 }
 
 void alias(char *key, char *value){
+    int status = 0;
+    int found;
+    char *currValue = malloc(512);
+    strcpy(currValue, value);
+    while (status ==0){
+        found = 0;
+        for (int i = 0; i<alSize;i++){
+            if (strcmp(aliasList[i].key[0], currValue) == 0){
+                if (strcmp(aliasList[i].value[0], key) == 0){
+                    status = -1;
+                }
+                found =1;
+                strcpy(currValue, aliasList[i].value[0]);
+            }
+        }
+        if (found == 0){
+            status =1;
+        }
+    }
+    if(status == 1){
     for (int i = 0; i<alSize;i++){
         if (strcmp(*(aliasList[i].key), key) == 0){
             printf("Alias already exists!\n");
@@ -114,8 +143,10 @@ void alias(char *key, char *value){
         strcpy(aliasList[alSize].value[0], value);
         alSize++;
     }
+    }
+    else printf("Alias would create a loop!\nAborting...\n");
 }
-    
+
 int parse(char input [512]){
     char * tokens[512];
     char * token = strtok(input, " \n\t|<>&;");
@@ -125,11 +156,35 @@ int parse(char input [512]){
      while(token != NULL ) {
       token = strtok(NULL, " \n\t|<>&;");
       tokens[i] = token;
-      i++;  
+      i++;
       }
     if(tokens[0] != NULL){
         for (int i = 0; i<alSize;i++){
             if (strcmp(*(aliasList[i].key), tokens[0]) == 0){
+                found = 1;
+                int skip = 0;
+                if (strncmp("!", aliasList[i].value[0], 1) == 0){
+                    int j = 0;
+                    if (strcmp("!!", *(aliasList[i].value))==0){
+                        j = -1;
+                    }
+                    else{
+                        j = strtol(aliasList[i].value[0]+1, NULL, 10);
+                    }
+                    if (j > 0 && j <=20){
+                        if (strcmp(commands[j-1], *(aliasList[i].key))==0){
+                            printf("History invocation aborted to prevent loop!\n");
+                            skip=1;
+                        }
+                    }
+                    else if ((j < 0 && j >=-20)){
+                        if (strcmp(commands[count+j], *(aliasList[i].key))==0){
+                            printf("History invocation aborted to prevent loop!\n");
+                            skip=1;
+                        }
+                    }
+                }
+                if (skip == 0){
                 char *val = malloc(511);
                 int j = 1;
                 strcat(val, *(aliasList[i].value));
@@ -142,7 +197,7 @@ int parse(char input [512]){
                 strcpy(saveVal, aliasList[i].value[0]);
                 parse(val);
                 strcpy(aliasList[i].value[0], saveVal);
-                found = 1;
+                }
             }
         }
     }
@@ -170,12 +225,13 @@ int parse(char input [512]){
             printf("Error: No history\n");
         }
         else if (fullLoop == 1){
-            for (int i = 0; i<20; i++);
-            printf("%d : %s\n",i+1 ,commands[i]);
+            for (int i = 0; i<20; i++){
+                printf("%d  %s\n",i+1 ,commands[i]);
+            }
         }
         else{
             for (int i = 0; i<count; i++){
-                printf("%d : %s\n",i+1 ,commands[i]);
+                printf("%d  %s\n",i+1 ,commands[i]);
             }
         }
     }
@@ -194,7 +250,7 @@ int parse(char input [512]){
                 parse(commands[count+no]);
             }
             else{
-                perror("Command not Found");
+                printf("no command at this number\n");
             }
         }
         else if( count == 20){
@@ -205,7 +261,7 @@ int parse(char input [512]){
                 parse(commands[20+no]);
             }
             else{
-                perror("Command not Found");
+                printf("number is out of range, please use a number between -20 and 20 that is not 0\n");
             }
         }
         else{
@@ -254,12 +310,10 @@ int parse(char input [512]){
             }
         }
     }
-    else if(strcmp(tokens[0], "setpath") ==0 ){
-         
+    else if(strcmp(tokens[0], "setpath") ==0 ){ 
         setpath(tokens);
     }
     else if(strcmp(tokens[0], "getpath") ==0 ){
-    
         getpath(tokens);
     }
     else if(strcmp(tokens[0], "currentCWD") ==0 ){
@@ -278,30 +332,28 @@ int parse(char input [512]){
 
 void save_file_alias(){
     FILE *file =NULL;
-    file= fopen(".aliases.txt","w");
-    if(file==NULL){
-        printf("This file does not seem to exist");
-        exit(1);
-    } else{
-     for (int i = 0; i<alSize; i++){   
+    char *dir = malloc(512);
+    char *home = malloc(512);
+    strcpy(home, getenv("HOME"));
+    dir = strcat(home, "/.aliases.txt");
+    file= fopen(dir,"w");
+    for (int i = 0; i<alSize; i++){
         fprintf(file,"%d%s %s\n",i+1 , aliasList[i].key[0], aliasList[i].value[0]);
     }
-    fclose(file);
-    }
+    fclose(file);  
 }
 
 void save_file_hist(){
     FILE *file =NULL;
-    file= fopen(".hist_list.txt","w");
-    if(file==NULL){
-        printf("This file does not seem to exist");
-        exit(1);
-    } else{
-     for (int i = 0; i<count; i++){ 
-                fprintf(file,"%d %s\n", i+1, commands[i]);
+    char *dir = malloc(512);
+    char *home = malloc(512);
+    strcpy(home, getenv("HOME"));
+    dir = strcat(home, "/.hist_list.txt");
+    file= fopen(dir,"w");
+    for (int i = 0; i<count; i++){
+        fprintf(file,"%d %s\n", i+1, commands[i]);
     }
     fclose(file);
-    }
 }
 
 void load_file_alias(){
@@ -313,8 +365,8 @@ void load_file_alias(){
     FILE *file =NULL;
     file= fopen(".aliases.txt","r");
     if(file==NULL){
-        printf("This file does not seem to exist\n");
-        exit(1);
+        printf("Alias file not detected, creating new...\n");
+        file = fopen(".aliases.txt","w");
     }else if(file!=NULL && fgets(line, 512, file) != NULL){
         do {
             i = strtol(line, &line, 10);
@@ -339,8 +391,8 @@ void load_file_hist(){
     FILE *file = NULL;
     file = fopen(".hist_list.txt","r");
     if(file==NULL){
-        printf("This file does not seem to exist\n");
-        exit(1);
+        printf("History file not detected, creating new...\n");
+        file = fopen(".hist_list.txt","w");
     }else{
          char *historyLine = malloc(512);
         while(fgets(historyLine, 512, file) != NULL) {
@@ -355,19 +407,20 @@ void load_file_hist(){
 }
 
 int execute(char * tokens[]){
-char * token =tokens[0] ;
-pid_t pid = fork(); 
-if (pid < 0){
-    perror("Error!");
-}
-else if (pid == 0){
-if(execvp(tokens[0], tokens)==-1);{
-    char * errormsg = tokens[0];
-    perror(errormsg);
-    exit(0);
-}}
-else{
-wait(NULL);
-}
-return 0;
+    char * token =tokens[0] ;
+    pid_t pid = fork(); 
+    if (pid < 0) {
+        perror("Error!");
+    }
+    else if (pid  == 0) {
+        if (execvp(tokens[0], tokens) == -1) {
+            char * errormsg = tokens[0];
+            perror(errormsg);
+            exit(0);
+        }
+    }
+    else {
+        wait(NULL);
+    }
+    return 0;
 }

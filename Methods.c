@@ -121,7 +121,6 @@ void alias(char *key, char *value){ //adds an alias
                     status = -1;
                 }
                 found =1;
-                free(tempValue);
             }
         }
         if (found == 0){ //if we reach the end of the chain, alias is OK to add

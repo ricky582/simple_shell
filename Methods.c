@@ -299,7 +299,7 @@ int parse(char input [512]){
         else{ //input is concatenated back into a string and aliased
             char *val = malloc(sizeof(char)*512);
             int i = 3;
-            strcat(val, tokens[2]);
+            strcpy(val, tokens[2]);
             while (tokens[i] != NULL){ 
                 strcat(val, " ");
                 strcat(val, tokens[i]);

@@ -6,7 +6,6 @@
 
 char commands[19][511];
 int count;
-int fullLoop;
 
 typedef struct Map{
     char *key[511];

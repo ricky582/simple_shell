@@ -60,7 +60,7 @@ void cd(char * tokens[]){ //uses chdir function to mimic cd
         chdir(home);
     }
     else if(tokens[2] != NULL){
-        printf("Error: Too many parameters");
+        printf("Error: Too many parameters\n");
     }
     else{
         if (chdir(tokens[1]) != 0){
@@ -121,6 +121,7 @@ void alias(char *key, char *value){ //adds an alias
                     status = -1;
                 }
                 found =1;
+                free(tempValue);
             }
         }
         if (found == 0){ //if we reach the end of the chain, alias is OK to add
@@ -230,12 +231,14 @@ int parse(char input [512]){
         }
     }
     if(strcmp(tokens[0], "!!") ==0 ){ //executes last command from history
+        if (tokens[1] == NULL){
         if (count > 0){
             parse(commands[count-1]);
         }
         else{
             printf("Error: No history!\n");
         }
+        }else printf("Error: too many parameters!\n");
     }
     else if(strcmp(tokens[0], "history") ==0 ){ //prints history
         if(tokens[1] != NULL){
@@ -248,6 +251,7 @@ int parse(char input [512]){
         }
     }
     else if(strncmp(tokens[0], "!", 1) ==0 ){  //history invocation by number
+        if (tokens[1] == NULL){
         char *ptr;
         int no = strtol((tokens[0]+1), &ptr ,10);
         if(count > 0){
@@ -265,6 +269,7 @@ int parse(char input [512]){
         else{
             printf("Error: No history!\n");
         }
+        }else printf("Error: too many parameters!\n");
     }
     else if(strcmp(tokens[0], "unalias") ==0 ){  //calls unalias command
         if(tokens[1] == NULL){

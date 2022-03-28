@@ -4,17 +4,20 @@
 #include <signal.h>
 #include <unistd.h>
 
-char commands[19][511];
-int count;
+char commands[19][511]; //array of strings to store input history
+int count; //represents size of commands array
 
-typedef struct Map{
+typedef struct Map{ //map structure to represent aliases
     char *key[511];
     char *value[511];
 } map ;
 
-map aliasList[10];
+map aliasList[10]; //array of maps to represent our alias list
 int alSize = 0;
 
+int checkHistory(char *key, char *value, int c);
+void alias(char *key, char *value);
+void unalias(char * target);
 void enterIntoArray(char input [512]);
 int parse(char input [512]);
 int reader();

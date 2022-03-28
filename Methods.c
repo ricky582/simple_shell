@@ -79,14 +79,14 @@ void getpath(char * tokens[]){ //uses getenv to print path
     }
 }
 
-void unalias(char * tokens){ //removes an alias
+void unalias(char * target){ //removes an alias
     int found = 0;
     if (alSize == 0){
         printf("Error: Alias list is empty!\n");
     }
     else{
         for (int i = 0; i<alSize;i++){
-            if (strcmp(aliasList[i].key[0], tokens) == 0){ //once target alias is found the list is shifted over it and alSize is reduced
+            if (strcmp(aliasList[i].key[0],  target) == 0){ //once target alias is found the list is shifted over it and alSize is reduced
                 while (i+1 != alSize){ 
                     strcpy(aliasList[i].key[0], aliasList[i+1].key[0]);
                     strcpy(aliasList[i].value[0], aliasList[i+1].value[0]);
@@ -376,8 +376,8 @@ void load_file_alias(){ //loads aliases from file
         do {
             i = strtol(line, &line, 10); //must be a number at start of line in the range 1 to 10 to be added, ignored otherwise
             if (i>0 && i<=10){
-                key[0] = malloc(malloc(sizeof(char)*512);
-                value[0] = malloc(malloc(sizeof(char)*512);
+                key[0] = malloc(sizeof(char)*512);
+                value[0] = malloc(sizeof(char)*512);
                 key[0] = strtok(line, " "); //first (non-number) token is the key
                 if (key != NULL){ //if key is null we ignore the line
                     value[0] = strtok(NULL, "\n"); //instead of splitting by spaces for value we just pull everything up to the end of the line
